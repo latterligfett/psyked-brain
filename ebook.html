@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brain Performance Blueprint - Psyked</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    :root{--accent:#00D4FF;--accent-dark:#0099BB;--accent-light:#E0F9FF;--navy:#0D1F2D;--navy-mid:#1A3448;--dark:#1C1C1E;--mid:#3A3A3C;--muted:#6E6E73;--light:#F5F5F7;--white:#FFFFFF;--border:#E0E0E5;}
+    html{font-size:16px;scroll-behavior:smooth;}
+    body{font-family:'Inter',-apple-system,sans-serif;font-size:17px;line-height:1.75;color:var(--dark);background:var(--white);-webkit-font-smoothing:antialiased;}
+    h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif;font-weight:700;line-height:1.2;letter-spacing:-0.02em;}
+    p{margin-bottom:1.2em;}
+    .pw{max-width:760px;margin:0 auto;padding:0 40px;}
+    /* COVER — teal blueprint design */
+    .cover{min-height:100vh;background:radial-gradient(ellipse at 50% 40%,#0E4A5C 0%,#0A3040 40%,#071E2C 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px 40px;position:relative;overflow:hidden;}
+    .cover::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(0,180,220,.12) 0%,transparent 65%);pointer-events:none;}
+    .cover-badge{font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.7);background:transparent;border:1px solid rgba(255,255,255,.25);padding:7px 22px;border-radius:100px;margin-bottom:60px;position:relative;}
+    .cover h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(52px,9vw,96px);color:#fff;font-weight:700;letter-spacing:-.04em;line-height:1.0;margin-bottom:0;position:relative;}
+    .cover h1 .line2{display:block;color:var(--accent);}
+    .cover-stats{font-family:'Space Grotesk',sans-serif;font-size:clamp(15px,2.2vw,20px);font-weight:400;color:rgba(255,255,255,.75);margin:32px 0 0;position:relative;line-height:1.6;}
+    .cover-stats .accent{color:var(--accent);}
+    .cover-divider{width:44px;height:2px;background:rgba(255,255,255,.35);margin:36px auto 36px;position:relative;}
+    .cover-author{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:400;color:rgba(255,255,255,.45);letter-spacing:.03em;position:relative;line-height:1.9;}
+    .cover-author strong{color:rgba(255,255,255,.85);font-weight:600;}
+    .cover-url{font-family:'Space Grotesk',sans-serif;font-size:13px;color:var(--accent);letter-spacing:.1em;text-decoration:none;display:block;margin-top:4px;}
+    /* FRONT MATTER */
+    .front-matter{background:var(--light);padding:60px 0;}
+    .front-box{background:var(--white);border-radius:12px;padding:40px 48px;margin-bottom:24px;border:1px solid var(--border);}
+    .front-box h3{font-size:12px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--accent-dark);margin-bottom:16px;}
+    .front-box p{font-size:14px;color:var(--muted);line-height:1.7;}
+    /* TOC */
+    .toc{padding:80px 0;background:var(--white);}
+    .toc-hdr{text-align:center;margin-bottom:60px;}
+    .toc-lbl{font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--accent-dark);margin-bottom:12px;display:block;}
+    .toc-hdr h2{font-size:40px;color:var(--navy);}
+    .toc-part{margin-bottom:40px;}
+    .toc-pl{font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--accent-light);}
+    .toc-e{display:flex;align-items:flex-end;gap:0;padding:12px 0;border-bottom:1px solid var(--border);text-decoration:none;color:inherit;}
+    .toc-n{font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;color:var(--accent);min-width:32px;flex-shrink:0;padding-bottom:2px;}
+    .toc-body{display:flex;flex-direction:column;flex-shrink:1;min-width:0;}
+    .toc-t{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;color:var(--dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .toc-s{font-family:'Inter',sans-serif;font-size:12px;font-weight:400;color:var(--muted);margin-top:1px;}
+    .toc-dots{flex:1;border-bottom:1.5px dotted #ccc;margin:0 10px 5px;min-width:20px;}
+    .toc-pg{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;color:var(--dark);flex-shrink:0;padding-bottom:2px;min-width:28px;text-align:right;}
+    /* PART BREAK */
+    .part-break{background:var(--navy);padding:100px 0;text-align:center;position:relative;overflow:hidden;}
+    .part-break::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(0,212,255,.08) 0%,transparent 70%);}
+    .pb-label{font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:var(--accent);margin-bottom:20px;position:relative;}
+    .part-break h2{font-size:clamp(28px,5vw,48px);color:#fff;letter-spacing:-.03em;position:relative;}
+    .pb-regions{margin-top:20px;font-family:'Space Grotesk',sans-serif;font-size:14px;color:rgba(255,255,255,.35);letter-spacing:.05em;position:relative;}
+    /* INTRO */
+    .intro{padding:80px 0;background:var(--white);}
+    .intro-lead{font-size:20px;font-weight:400;color:var(--mid);line-height:1.65;margin-bottom:2em;border-left:4px solid var(--accent);padding-left:24px;}
+    .regions-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:40px 0;}
+    .rp{display:flex;align-items:flex-start;gap:12px;padding:16px 18px;background:var(--light);border-radius:10px;border:1px solid var(--border);}
+    .rp-num{font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;color:var(--accent);min-width:20px;}
+    .rp-name{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:var(--navy);margin-bottom:2px;}
+    .rp-desc{font-size:12.5px;color:var(--muted);line-height:1.5;margin:0;}
+    /* CHAPTER */
+    .chapter{padding:72px 0;}
+    .ch-hdr{margin-bottom:52px;padding-bottom:40px;border-bottom:2px solid var(--border);}
+    .ch-num{font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;display:block;}
+    .chapter h1{font-size:clamp(30px,5vw,48px);color:var(--navy);letter-spacing:-.035em;}
+    .ch-sub{display:block;font-size:.55em;font-weight:400;color:var(--muted);letter-spacing:-.01em;margin-top:8px;}
+    .chapter h2{font-size:22px;color:var(--navy);margin-top:48px;margin-bottom:16px;letter-spacing:-.02em;}
+    /* PROTOCOL CARDS */
+    .pgrid{display:flex;flex-direction:column;gap:20px;margin:40px 0;}
+    .pcard{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--white);}
+    .pcard-h{display:flex;align-items:center;gap:16px;padding:20px 24px;background:var(--light);border-bottom:1px solid var(--border);}
+    .pnum{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;color:#fff;background:var(--accent);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .ptitle{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;color:var(--navy);flex:1;}
+    .pbody{padding:24px;}
+    .pmech{background:var(--accent-light);border-left:3px solid var(--accent);padding:14px 18px;border-radius:0 8px 8px 0;margin-bottom:18px;font-size:15px;color:var(--navy-mid);line-height:1.65;}
+    .pbullets{padding-left:0;list-style:none;}
+    .pbullets li{display:flex;gap:10px;margin-bottom:8px;font-size:15.5px;line-height:1.65;}
+    .pbullets li::before{content:'\2192';color:var(--accent);font-weight:700;flex-shrink:0;margin-top:1px;}
+    .psteps{padding-left:0;list-style:none;counter-reset:s;}
+    .psteps li{counter-increment:s;display:flex;gap:12px;margin-bottom:10px;font-size:15.5px;line-height:1.65;}
+    .psteps li::before{content:counter(s);font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;color:var(--accent-dark);min-width:22px;height:22px;display:flex;align-items:center;justify-content:center;border:1.5px solid var(--accent);border-radius:50%;flex-shrink:0;margin-top:2px;}
+    /* SUMMARY BOX */
+    .ch-sum{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 100%);border-radius:16px;padding:40px 44px;margin:56px 0 0;color:#fff;}
+    .ch-sum .slbl{font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-bottom:16px;display:block;}
+    .ch-sum .stitle{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:20px;line-height:1.3;}
+    .stbl{width:100%;border-collapse:collapse;margin-top:20px;}
+    .stbl th{font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(0,212,255,.7);padding:8px 12px;text-align:left;border-bottom:1px solid rgba(255,255,255,.1);}
+    .stbl td{font-size:14px;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.06);color:rgba(255,255,255,.85);line-height:1.5;vertical-align:top;}
+    .stbl tr:last-child td{border-bottom:none;}
+    .stbl td:first-child{font-weight:600;color:#fff;white-space:nowrap;}
+    .ch-insight{margin-top:24px;padding-top:20px;border-top:1px solid rgba(255,255,255,.12);font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:500;color:var(--accent);font-style:italic;}
+    /* HIGHLIGHT BOX */
+    .hbox{background:var(--accent-light);border-left:4px solid var(--accent);border-radius:0 8px 8px 0;padding:20px 24px;margin:28px 0;font-size:16px;line-height:1.7;color:var(--navy-mid);}
+    /* QR SECTION */
+    .qr-sec{padding:80px 0;background:var(--light);}
+    .qr-card{background:var(--white);border-radius:16px;margin-bottom:32px;overflow:hidden;border:1px solid var(--border);box-shadow:0 2px 12px rgba(0,0,0,.04);}
+    .qr-ch{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 100%);padding:28px 36px;display:flex;align-items:center;gap:20px;}
+    .qr-rn{font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:700;color:var(--accent);min-width:40px;opacity:.6;}
+    .qr-ct h3{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:4px;text-transform:none;letter-spacing:-.02em;}
+    .qr-ct p{font-size:13px;color:rgba(255,255,255,.45);margin:0;font-family:'Space Grotesk',sans-serif;}
+    .qr-row{display:flex;align-items:flex-start;gap:16px;padding:16px 24px;border-bottom:1px solid var(--border);}
+    .qr-row:last-child{border-bottom:none;}
+    .qrn{font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:#fff;background:var(--accent);width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .qrname{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;color:var(--navy);min-width:180px;flex-shrink:0;}
+    .qract{font-size:13.5px;color:var(--muted);flex:1;line-height:1.4;margin:0;}
+    /* READING */
+    .reading-sec{padding:80px 0;background:var(--white);}
+    .reading-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:36px;}
+    .rcard{border:1px solid var(--border);border-radius:12px;padding:24px;text-decoration:none;color:inherit;display:block;}
+    .rcard:hover{border-color:var(--accent);}
+    .rcard-num{font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;color:var(--accent);margin-bottom:8px;letter-spacing:.1em;}
+    .rcard-title{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;color:var(--navy);margin-bottom:4px;line-height:1.3;}
+    .rcard-auth{font-size:13px;color:var(--muted);margin-bottom:10px;}
+    .rcard-desc{font-size:13px;color:var(--mid);line-height:1.6;margin:0;}
+    /* CTA */
+    .cta-sec{background:linear-gradient(135deg,var(--navy) 0%,#0D2B3E 100%);padding:100px 0;text-align:center;position:relative;overflow:hidden;}
+    .cta-sec::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(0,212,255,.12) 0%,transparent 65%);}
+    .cta-sec .pw{position:relative;}
+    .cta-sec h2{font-size:40px;color:#fff;margin-bottom:16px;}
+    .cta-desc{font-size:18px;color:rgba(255,255,255,.55);margin-bottom:48px;}
+    .cta-btn{display:inline-block;background:var(--accent);color:var(--navy);font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;padding:18px 40px;border-radius:100px;text-decoration:none;letter-spacing:.02em;}
+    .cta-social{margin-top:40px;font-size:13px;color:rgba(255,255,255,.35);font-family:'Space Grotesk',sans-serif;}
+    .slabel{font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--accent-dark);margin-bottom:12px;display:block;}
+    /* PRINT */
+    @media print {
+      @page {
+        size: A4;
+        margin: 20mm 15mm 22mm 15mm;
+        @bottom-right {
+          content: counter(page);
+          font-family: 'Inter', sans-serif;
+          font-size: 9pt;
+          color: #aaaaaa;
+        }
+      }
+      body{font-size:10.5pt;line-height:1.6;color:#111;}
+      .cover,.part-break,.ch-sum,.cta-sec{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+      .cover{page-break-after:always;min-height:297mm;}
+      .chapter{page-break-before:always;}
+      .pcard,.qr-card{page-break-inside:avoid;}
+      a{color:inherit;text-decoration:none;}
+      .print-footer { display: none; }
+      .cover { page-break-after: always; }
+      .front-matter { display: none; }
+      .toc { page-break-after: always; }
+      .part-break { page-break-after: always; }
+      .chapter { page-break-before: auto; page-break-inside: avoid; }
+      .pcard { page-break-inside: avoid; }
+      .ch-sum { page-break-inside: avoid; }
+    }
+    @media(max-width:640px){
+      .pw{padding:0 20px;}
+      .regions-grid,.reading-grid{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+<!-- COVER -->
+<div class="cover" id="cover">
+  <div class="cover-badge">psyked.app</div>
+  <h1>Brain Performance<span class="line2">Blueprint</span></h1>
+  <p class="cover-stats"><span class="accent">45 Protocols</span> on training <span class="accent">9 Brain Regions</span><br>to Unlimited Performance.</p>
+  <div class="cover-divider"></div>
+  <div class="cover-author">
+    Science-backed performance neuroscience<br>
+    by <strong>The Psyked Team</strong><br>
+    <a href="https://psyked.app" class="cover-url">psyked.app</a>
+  </div>
+</div>
+
+<!-- FRONT MATTER -->
+<div class="front-matter" id="front-matter">
+  <div class="pw" style="max-width:680px;">
+    <div class="front-box">
+      <h3>Copyright</h3>
+      <p>&#169; 2026 Psyked. All rights reserved. No part of this publication may be reproduced, distributed, or transmitted without prior written permission from the publisher.</p>
+    </div>
+    <div class="front-box">
+      <h3>Disclaimer</h3>
+      <p>This book is for <strong>educational purposes only</strong>. The information contained herein is not medical advice and is not intended to diagnose, treat, cure, or prevent any disease or health condition. Always consult a qualified healthcare professional before starting any new exercise, supplementation, or health protocol. The authors and publisher are not liable for any outcomes resulting from the application of the information in this book.</p>
+    </div>
+  </div>
+</div>
+
+<!-- TABLE OF CONTENTS -->
+<div class="toc" id="toc">
+  <div class="pw">
+    <div class="toc-hdr">
+      <span class="toc-lbl">Contents</span>
+      <h2>Table of Contents</h2>
+    </div>
+    <a class="toc-e" href="#intro"><span class="toc-n">&#8595;</span><div class="toc-body"><span class="toc-t">Introduction: The Most Powerful Tool You Own</span></div><span class="toc-dots"></span><span class="toc-pg">4</span></a>
+    <div class="toc-part" style="margin-top:32px;">
+      <div class="toc-pl">Part 1 &#8212; The Command Center</div>
+      <a class="toc-e" href="#ch1"><span class="toc-n">01</span><div class="toc-body"><span class="toc-t">Prefrontal Cortex</span><span class="toc-s">The Willpower Engine</span></div><span class="toc-dots"></span><span class="toc-pg">6</span></a>
+      <a class="toc-e" href="#ch2"><span class="toc-n">02</span><div class="toc-body"><span class="toc-t">Anterior Cingulate Cortex</span><span class="toc-s">The Grit Circuit</span></div><span class="toc-dots"></span><span class="toc-pg">10</span></a>
+      <a class="toc-e" href="#ch3"><span class="toc-n">03</span><div class="toc-body"><span class="toc-t">Basal Ganglia</span><span class="toc-s">The Habit Automation System</span></div><span class="toc-dots"></span><span class="toc-pg">13</span></a>
+    </div>
+    <div class="toc-part">
+      <div class="toc-pl">Part 2 &#8212; The Learning Machine</div>
+      <a class="toc-e" href="#ch4"><span class="toc-n">04</span><div class="toc-body"><span class="toc-t">Hippocampus</span><span class="toc-s">The Learning Accelerator</span></div><span class="toc-dots"></span><span class="toc-pg">17</span></a>
+      <a class="toc-e" href="#ch5"><span class="toc-n">05</span><div class="toc-body"><span class="toc-t">Temporal Lobe</span><span class="toc-s">The Coaching Receiver</span></div><span class="toc-dots"></span><span class="toc-pg">20</span></a>
+    </div>
+    <div class="toc-part">
+      <div class="toc-pl">Part 3 &#8212; The Body-Brain Interface</div>
+      <a class="toc-e" href="#ch6"><span class="toc-n">06</span><div class="toc-body"><span class="toc-t">Cerebellum</span><span class="toc-s">The Precision Engine</span></div><span class="toc-dots"></span><span class="toc-pg">23</span></a>
+      <a class="toc-e" href="#ch7"><span class="toc-n">07</span><div class="toc-body"><span class="toc-t">Amygdala</span><span class="toc-s">The Threat Processor</span></div><span class="toc-dots"></span><span class="toc-pg">27</span></a>
+      <a class="toc-e" href="#ch8"><span class="toc-n">08</span><div class="toc-body"><span class="toc-t">Brain Stem</span><span class="toc-s">The Foundation</span></div><span class="toc-dots"></span><span class="toc-pg">30</span></a>
+    </div>
+    <div class="toc-part">
+      <div class="toc-pl">Part 4 &#8212; The Gatekeeper</div>
+      <a class="toc-e" href="#ch9"><span class="toc-n">09</span><div class="toc-body"><span class="toc-t">Thalamus</span><span class="toc-s">The Attention Architect</span></div><span class="toc-dots"></span><span class="toc-pg">34</span></a>
+    </div>
+    <div class="toc-part">
+      <div class="toc-pl">Part 5 &#8212; Stacking the Protocols</div>
+      <a class="toc-e" href="#ch10"><span class="toc-n">10</span><div class="toc-body"><span class="toc-t">The Complete System</span><span class="toc-s">Daily, Pre-Competition &amp; Recovery Stacks</span></div><span class="toc-dots"></span><span class="toc-pg">38</span></a>
+    </div>
+    <div class="toc-part">
+      <div class="toc-pl">Back Matter</div>
+      <a class="toc-e" href="#qr"><span class="toc-n">&#9733;</span><div class="toc-body"><span class="toc-t">Quick Reference Cards</span><span class="toc-s">All 9 regions &middot; 45 protocols</span></div><span class="toc-dots"></span><span class="toc-pg">42</span></a>
+      <a class="toc-e" href="#reading"><span class="toc-n">&#9733;</span><div class="toc-body"><span class="toc-t">Recommended Reading</span><span class="toc-s">10 essential books to go deeper</span></div><span class="toc-dots"></span><span class="toc-pg">46</span></a>
+    </div>
+  </div>
+</div>
+
+<!-- INTRODUCTION -->
+<div class="intro" id="intro">
+  <div class="pw">
+    <div style="margin-bottom:48px;">
+      <span class="slabel">Introduction</span>
+      <h1 style="font-size:40px;color:var(--navy);line-height:1.15;">The Most Powerful Performance Tool You Own &#8212; And Never Learned to Use</h1>
+    </div>
+    <p class="intro-lead">Most athletes will never reach their ceiling. Not because of their body &#8212; because of their brain.</p>
+    <p>You've optimized your training. You've dialed your nutrition. You track HRV, VO2 max, sleep stages. You hire coaches, buy gear, study periodization. But the one organ that decides whether you push through or quit, whether you focus or drift, whether you choke under pressure or execute flawlessly &#8212; your brain &#8212; gets almost zero direct attention. That's the gap this book closes.</p>
+    <p>The sports world has spent decades perfecting the body. Nutrition science tells you what to eat. Training science tells you how to move. Recovery science tells you when to rest. But performance neuroscience &#8212; the science of how your brain actually drives everything &#8212; has been locked in academic journals. It hasn't reached the locker room, the gym floor, or the biohacker's morning routine. Not in a usable form. Until now.</p>
+    <div class="hbox"><strong>Here's what most performance advice misses: everything is brain-first.</strong> Discipline isn't a character trait &#8212; it's a function of your prefrontal cortex. Grit isn't a personality type &#8212; it's your anterior cingulate cortex under pressure. Your habits aren't choices &#8212; they're automated loops running through your basal ganglia.</div>
+    <p>Once you understand which brain regions drive which performance qualities &#8212; and how to train them &#8212; the whole game changes. That's what this book delivers.</p>
+    <p><strong>How to use this book:</strong> Each chapter covers one brain region. You'll learn what it is, what it does, why it matters for performance, and the five evidence-based protocols you can implement immediately. Read front to back for the full picture, or jump to the region most relevant to your current bottleneck. Chapter 10 ties it all together into daily, pre-competition, and recovery stacks.</p>
+    <div style="margin:48px 0;">
+      <span class="slabel" style="margin-bottom:20px;">The 9 Regions at a Glance</span>
+      <div class="regions-grid">
+        <div class="rp"><span class="rp-num">01</span><div><div class="rp-name">Prefrontal Cortex</div><p class="rp-desc">Willpower, decisions, discipline</p></div></div>
+        <div class="rp"><span class="rp-num">02</span><div><div class="rp-name">Anterior Cingulate Cortex</div><p class="rp-desc">Grit, effort, pain tolerance</p></div></div>
+        <div class="rp"><span class="rp-num">03</span><div><div class="rp-name">Basal Ganglia</div><p class="rp-desc">Habit automation, dopamine loops</p></div></div>
+        <div class="rp"><span class="rp-num">04</span><div><div class="rp-name">Hippocampus</div><p class="rp-desc">Memory formation, neurogenesis</p></div></div>
+        <div class="rp"><span class="rp-num">05</span><div><div class="rp-name">Temporal Lobe</div><p class="rp-desc">Coaching uptake, skill storage</p></div></div>
+        <div class="rp"><span class="rp-num">06</span><div><div class="rp-name">Cerebellum</div><p class="rp-desc">Motor precision, muscle memory</p></div></div>
+        <div class="rp"><span class="rp-num">07</span><div><div class="rp-name">Amygdala</div><p class="rp-desc">Stress response, pressure performance</p></div></div>
+        <div class="rp"><span class="rp-num">08</span><div><div class="rp-name">Brain Stem</div><p class="rp-desc">Autonomic baseline, HRV, breathing</p></div></div>
+        <div class="rp"><span class="rp-num">09</span><div><div class="rp-name">Thalamus</div><p class="rp-desc">Attention gating, sensory focus</p></div></div>
+      </div>
+    </div>
+    <p style="font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:600;color:var(--navy);">Let's build your blueprint.</p>
+  </div>
+</div>
+
+<!-- PART 1 -->
+<div class="part-break" id="part1">
+  <div class="pb-label">Part One</div>
+  <h2>The Command Center</h2>
+  <p class="pb-regions">Prefrontal Cortex &middot; Anterior Cingulate Cortex &middot; Basal Ganglia</p>
+</div>
+
+<!-- CHAPTER 1 -->
+<div class="chapter" id="ch1">
+  <div class="pw">
+    <div class="ch-hdr">
+      <span class="ch-num">Chapter 01</span>
+      <h1>Prefrontal Cortex<span class="ch-sub">The Willpower Engine</span></h1>
+    </div>
+    <p style="font-size:18px;font-weight:500;color:var(--accent-dark);line-height:1.6;margin-bottom:32px;border-left:4px solid var(--accent);padding-left:20px;">If your discipline collapses mid-session, your focus fractures under pressure, or your decision-making deteriorates late in competition &#8212; your prefrontal cortex is where you fix it first.</p>
+    <h2>What It Is</h2>
+    <p>The prefrontal cortex (PFC) is the most distinctly human part of your brain. Sitting right behind your forehead, it took evolution 200 million years to build. It's your brain's CEO &#8212; handling executive functions: planning, decision-making, impulse control, working memory, and the regulation of behavior in line with internal goals rather than immediate rewards. It's the part of you that says "I don't want to do this, but I'm going to do it anyway" &#8212; the entire foundation of high performance.</p>
+    <h2>Why It Matters for Performance</h2>
+    <p>The PFC is a metabolically expensive, chronically fatigued system. Every decision you make, every impulse you resist, every moment of sustained focus draws from the same limited resource pool. Roy Baumeister's ego depletion research showed that exercising self-control in one task measurably impairs self-control in a subsequent task. The fuel is finite.</p>
+    <p>Practically: a judge at 9am grants parole 65% of the time. The same judge at 4pm, after a full day of decisions? Under 10%. The cases didn't change. The brain did. Arrive to training with a depleted PFC and your discipline, focus, and pain tolerance are already compromised.</p>
+    <h2>The Science</h2>
+    <p>Research from Sara Lazar at Harvard showed regular meditators have measurably thicker prefrontal cortices than non-meditators &#8212; more gray matter means more processing capacity, better regulation, better performance. The PFC remains plastic &#8212; structurally changeable &#8212; throughout life. This is not fixed hardware. It is trainable tissue.</p>
+    <h2>5 Protocols</h2>
+    <div class="pgrid">
+      <div class="pcard">
+        <div class="pcard-h"><div class="pnum">1</div><div class="ptitle">Cold Exposure &#8212; 2&#8211;3 Minutes</div></div>
+        <div class="pbody"><div class="pmech"><strong>Mechanism:</strong> Cold water activates the locus coeruleus, releasing norepinephrine throughout the brain &#8212; sharpening PFC signal clarity. A 2022 study found 11 min/week of cold immersion significantly elevated norepinephrine. Equally: stepping into cold water is a PFC-over-amygdala rep. You're training the willpower circuit directly.</div><ul class="pbullets"><li>End your shower with 2&#8211;3 min cold (as cold as your shower gets)</li><li>Start with 30 sec and build over 2 weeks</li><li>Breathe slowly &#8212; resist the gasp reflex; this IS the training</li><li>Optimal timing: morning, to anchor alertness for the day</li><li>Advanced: ice bath at 57&#176;F/14&#176;C, 2&#8211;4 min, 3&#8211;4x per week</li></ul></div>
+      </div>
+      <div class="pcard">
+        <div class="pcard-h"><div class="pnum">2</div><div class="ptitle">Daily Meditation &#8212; 10 Minutes</div></div>
+        <div class="pbody"><div class="pmech"><strong>Mechanism:</strong> Every time your mind wanders and you bring it back, you perform a bicep curl for your PFC. A 2011 Harvard study found measurable PFC gray matter increases after just 8 weeks of practice.</div><ol class="psteps"><li>Sit comfortably, spine upright. Set a timer for 10 minutes.</li><li>Close your eyes, breathe naturally through your nose.</li><li>Focus attention on the sensation of breath at your nostrils.</li><li>When your mind wanders &#8212; notice it without judgment, return to breath.</li><li>That noticing-and-returning IS the practice. Every rep builds the PFC.</li></ol></div>
+      </div>
+      <div class="pcard">
+        <div class="pcard-h"><div class="pnum">3</div><div class="ptitle">Decision Batching</div></div>
+        <div class="pbody"><div class="pmech"><strong>Mechanism:</strong> Every decision depletes the same PFC resource pool. Batch decisions to preserve capacity for high-stakes moments. This is why Jobs wore the same turtleneck &#8212; not rigidity, but neuroscience.</div><ul class="pbullets"><li>Sunday evening: decide training schedule, meals, and priorities for the week</li><li>Each morning: write your 3 most important tasks &#8212; don't renegotiate mid-day</li><li>Template small decisions: same breakfast, gear laid out the night before</li><li>Guard the first 2 hours: highest-value cognitive work before fatigue accumulates</li><li>No phone for the first 30 minutes of the day</li></ul></div>
+      </div>
+      <div class="pcard">
+        <div class="pcard-h"><div class="pnum">4</div><div class="ptitle">Sleep Optimization &#8212; 7&#8211;9 Hours</div></div>
+        <div class="pbody"><div class="pmech"><strong>Mechanism:</strong> The PFC is the most sleep-sensitive brain region. A single night under 6 hours impairs PFC function comparable to legal intoxication. During deep sleep, the glymphatic system clears neurotoxic waste &#8212; this is maintenance, not just recovery.</div><ul class="pbullets"><li>Same wake time &#177;30 min, 7 days/week &#8212; anchors your circadian rhythm</li><li>Bedroom at 65&#8211;68&#176;F (18&#8211;20&#176;C) &#8212; core temp must drop for deep sleep</li><li>Block blue light 90 min before bed; bright sunlight within 30 min of waking</li><li>No caffeine after 12&#8211;1pm (half-life 5&#8211;7 hours)</li><li>20&#8211;30 min deliberate wind-down: reading, stretching, journaling</li></ul></div>
+      </div>
+      <div class="pcard">
+        <div class="pcard-h"><div class="pnum">5</div><div class="ptitle">Progressive Discipline Training</div></div>
+        <div class="pbody"><div class="pmech"><strong>Mechanism:</strong> Just as muscle responds to progressive overload, the PFC responds to progressive challenge. Each impulse override strengthens synaptic connections between PFC and limbic system. Long-term consistent practice increases overall self-regulatory capacity.</div><ul class="pbullets"><li>Identify one small discomfort you avoid &#8212; do it daily for 30 days</li><li>Examples: cold shower, skipping dessert 5x/week, hardest task first each morning</li><li>The specific behavior matters less than the consistent PFC-over-impulse practice</li><li>Gradually escalate difficulty after each 30-day block</li><li>Track your streak &#8212; implementation intentions improve follow-through</li></ul></div>
+      </div>
+    </div>
+    <div class="ch-sum">
+      <span class="slbl">Chapter Summary</span>
+      <div class="stitle">Prefrontal Cortex &#8212; 5 Protocols at a Glance</div>
+      <table class="stbl">
+        <tr><th>#</th><th>Protocol</th><th>Mechanism</th><th>Action</th></tr>
+        <tr><td>1</td><td>Cold Exposure</td><td>Norepinephrine + willpower reps</td><td>2&#8211;3 min cold shower daily</td></tr>
+        <tr><td>2</td><td>Meditation</td><td>Gray matter growth, attentional reps</td><td>10 min focused attention daily</td></tr>
+        <tr><td>3</td><td>Decision Batching</td><td>Preserve PFC for high-stakes moments</td><td>Weekly + morning planning ritual</td></tr>
+        <tr><td>4</td><td>Sleep</td><td>Glymphatic clearance, PFC recovery</td><td>7&#8211;9h, consistent schedule</td></tr>
+        <tr><td>5</td><td>Progressive Discipline</td><td>Synaptic strengthening</td><td>Daily small discomfort challenge</td></tr>
+      </table>
+      <div class="ch-insight">"Willpower is a biological resource &#8212; depletable, restorable, and trainable. Treat it like one."</div>
+      <p style="margin-top:20px;font-family:'Space Grotesk',sans-serif;font-size:15px;color:#fff;border-top:1px solid rgba(255,255,255,.15);padding-top:16px;margin-bottom:0;"><strong style="color:var(--accent);">KEY TAKEAWAY:</strong> Cold exposure, daily meditation, and consistent sleep are your three highest-leverage PFC protocols. Start with two minutes of cold water at the end of your next shower.</p>
+    </div>
+  </div>
+</div>
+
+<!-- CHAPTER 2 -->
+<div class="chapter" id="ch2" style="background:var(--light);">
+  <div class="pw">
+    <div class="ch-hdr">
+      <span class="ch-num">Chapter 02</span>
+      <h1>Anterior Cingulate Cortex<span class="ch-sub">The Grit Circuit</span></h1>
+    </div>
+    <p style="font-size:18px;font-weight:500;color:var(--accent-dark);line-height:1.6;margin-bottom:32px;border-left:4px solid var(--accent);padding-left:20px;">If you quit too early in training, avoid the hardest reps, or fall apart when competition gets painful &#8212; your ACC is the ceiling you need to raise.</p>
+    <h2>What It Is</h2>
+    <p>Deep in the fold where your two brain hemispheres meet sits a thumb-sized strip of cortex that may be the most important region for competitive performance that nobody talks about: the anterior cingulate cortex (ACC). It's your brain's conflict monitor &#8212; evaluating the gap between what you want to do and what you need to do. Its most critical function: <strong>it processes effort and pain.</strong> Every time training becomes genuinely hard, the ACC runs the calculation: how much of this discomfort actually needs to stop you? This is the neurological home of grit.</p>
+    <h2>The Pain/Effort Intersection</h2>
+    <p>Every pain signal has two components: the <strong>sensory component</strong> (actual intensity) and the <strong>affective component</strong> (how threatening you perceive it). Elite athletes don't feel less physical discomfort &#8212; their ACC has become more effective at reducing the affective weight of that discomfort. They hurt just as much. But the hurt controls their behavior less.</p>
+    <h2>The 40% Rule: Neuroscience</h2>
+    <p>David Goggins' "40% rule" has a neurological basis. The ACC calculates a constant cost-benefit ratio for effort. A 2016 University of Birmingham study found that 6 weeks of maximal effort intervals changed not just physiology but psychological effort tolerance &#8212; participants rated the same intensity as less unpleasant after the training block. The ACC is plastic. Train it.</p>
+    <div class="pgrid">
+      <div class="pcard"><div class="pcard-h"><div class="pnum">1</div><div class="ptitle">High-Intensity Training</div></div><div class="pbody"><div class="pmech"><strong>Mechanism:</strong> The ACC requires genuine discomfort to adapt. Zone 5 max-effort intervals repeatedly expose the ACC to discomfort and train its quit threshold upward &#8212; not just physiologically, but psychologically.</div><ul class="pbullets"><li>2x per week: 4&#8211;6 rounds of 30-sec all-out effort (sprint, assault bike, row)</li><li>2&#8211;3 min recovery between rounds</li><li>During intervals: stay <em>with</em> the discomfort &#8212; don't mentally escape. This is the ACC training.</li><li>Add 1 interval every 2 weeks as tolerance rises</li></ul></div></div>
+      <div class="pcard"><div class="pcard-h"><div class="pnum">2</div><div class="ptitle">Mindfulness for ACC Thickening</div></div><div class="pbody"><div class="pmech"><strong>Mechanism:</strong> Long-term meditators have measurably thicker ACC cortex &#8212; and report lower pain unpleasantness at the same intensity. Meditation physically thickens the part of your brain that controls how much discomfort governs your behavior.</div><ul class="pbullets"><li>10&#8211;20 min open-monitoring meditation daily</li><li>Allow thoughts and sensations to arise and pass without reacting</li><li>When discomfort arises &#8212; observe it without acting on it</li><li>This directly mirrors competition: observe discomfort without obeying it</li></ul></div></div>
+      <div class="pcard"><div class="pcard-h"><div class="pnum">3</div><div class="ptitle">Goal-Setting Rituals</div></div><div class="pbody"><div class="pmech"><strong>Mechanism:</strong> The ACC calculates effort against goal-value. Higher perceived goal importance = higher effort ceiling. A 2017 meta-analysis found specific, challenging goals improved performance 12&#8211;15% vs. vague ones.</div><ul class="pbullets"><li>Daily: write your #1 training goal before each session &#8212; one specific sentence</li><li>Weekly: reconnect to your larger 'why' in writing</li><li>Pre-competition: 2&#8211;3 min ritual that reconnects you to purpose</li><li>Consistent rituals reduce anxiety and prime ACC for higher effort output</li></ul></div></div>
+      <div class="pcard"><div class="pcard-h"><div class="pnum">4</div><div class="ptitle">Caffeine Optimization &#8212; 200&#8211;400mg</div></div><div class="pbody"><div class="pmech"><strong>Mechanism:</strong> Caffeine blocks adenosine receptors in the ACC, delaying perception of effort and fatigue. A meta-analysis of 34 studies found caffeine improves endurance by ~11% &#8212; primarily through reducing perceived exertion at the same workload.</div><ul class="pbullets"><li>Dose: 3&#8211;6mg/kg bodyweight (200&#8211;400mg for most athletes)</li><li>Timing: 30&#8211;60 min before performance for peak blood levels</li><li>Cycle caffeine: 5 days on, 2 off &#8212; or 5&#8211;7 day breaks every 4&#8211;6 weeks to restore sensitivity</li><li>Caution: above 400mg increases anxiety in many &#8212; the amygdala activates too</li></ul></div></div>
+      <div class="pcard"><div class="pcard-h"><div class="pnum">5</div><div class="ptitle">Iron Level Monitoring</div></div><div class="pbody"><div class="pmech"><strong>Mechanism:</strong> Iron deficiency &#8212; even without anemia &#8212; reduces dopamine synthesis, lowering ACC motivational drive and raising perceived exertion. A 2004 study found iron-deficient non-anemic women had significantly higher RPE at the same workload &#8212; normalized after supplementation.</div><ul class="pbullets"><li>Get ferritin tested (not just hemoglobin) 2x per year</li><li>Optimal athlete ferritin: 50&#8211;100+ ng/mL (labs flag &gt;12 as 'normal' &#8212; not optimal)</li><li>Iron-rich foods: red meat, shellfish, organ meats, legumes + vitamin C</li><li>Test before supplementing &#8212; over-supplementation is harmful</li></ul></div></div>
+    </div>
+    <div class="ch-sum">
+      <span class="slbl">Chapter Summary</span>
+      <div class="stitle">The ACC is where your ceiling lives.</div>
+      <table class="stbl">
+        <tr><th>#</th><th>Protocol</th><th>Action</th></tr>
+        <tr><td>1</td><td>HIIT</td><td>2x/week max-effort intervals; stay with the discomfort</td></tr>
+        <tr><td>2</td><td>Mindfulness</td><td>10&#8211;20 min open monitoring daily</td></tr>
+        <tr><td>3</td><td>Goal Rituals</td><td>Daily purpose statement before every training session</td></tr>
+        <tr><td>4</td><td>Caffeine</td><td>200&#8211;400mg, 30&#8211;60 min pre-performance; cycle regularly</td></tr>
+        <tr><td>5</td><td>Iron Monitoring</td><td>Ferritin test 2x/year; target 50&#8211;100+ ng/mL</td></tr>
+      </table>
+      <div class="ch-insight">"The 40% rule isn't motivation. It's your ACC. Train it."</div>
+      <p style="margin-top:20px;font-family:'Space Grotesk',sans-serif;font-size:15px;color:#fff;border-top:1px solid rgba(255,255,255,.15);padding-top:16px;margin-bottom:0;"><strong style="color:var(--accent);">KEY TAKEAWAY:</strong> Your effort ceiling is not fixed — it's a trainable threshold. Add one 30-second all-out interval to your next session and stay with the discomfort instead of backing off.</p>
+    </div>
+  </div>
+</div>
+
+<!-- CHAPTER 3 -->
+<div class="chapter" id="ch3">
+  <div class="pw">
+    <div class="ch-hdr">
+      <span class="ch-num">Chapter 03</span>
+      <h1>Basal Ganglia<span class="ch-sub">The Habit Automation System</span></h1>
+    </div>
+    <p style="font-size:18px;font-weight:500;color:var(--accent-dark);line-height:1.6;margin-bottom:32px;border-left:4px solid var(--accent);padding-left:20px;">If training consistency feels like constant willpower battles, or stress derails routines you've built for months &#8212; your basal ganglia automation system is under-trained.</p>
+    <h2>What It Is</h2>
+    <p>Deep beneath your cerebral cortex, the basal ganglia are your brain's automation engine. They don't think or plan &#8212; they run programs. Deeply learned behavioral sequences execute automatically based on environmental cues and expected rewards. Your habits live here, running on dopamine.</p>
+    <h2>The Dopamine Loop</h2>
+    <p>The habit loop: <strong>cue &#8594; routine &#8594; reward.</strong> With repetition, your basal ganglia absorb behaviors from your PFC and automate them. Wolfram Schultz's landmark studies showed dopamine fires not at reward delivery but in <em>anticipation</em> of it &#8212; shifting toward the cue. A habit requires only a cue. A decision burns PFC energy. Habits win when willpower is depleted &#8212; every time.</p>
+    <h2>Why Habits Are Harder to Break Than You Think</h2>
+    <p>Bad habits don't get erased &#8212; they get competed with. Under stress, PFC control diminishes and basal ganglia automaticity takes over. The deepest groove wins by default. Don't try to break bad habits through willpower alone. Build competing habits so deeply they win even when the PFC is offline.</p>
+    <div class="pgrid">
+      <div class="pcard"><div class="pcard-h"><div class="pnum">1</div><div class="ptitle">Habit Stacking</div></div><div class="pbody"><div class="pmech"><strong>Mechanism:</strong> Anchor new habits to existing ones. The existing habit provides the cue &#8212; the basal ganglia adopt the new behavior faster because the triggering infrastructure already exists.</div><ul class="pbullets"><li>"After I pour morning coffee, I will write my 3 priorities"</li><li>"After I sit to change shoes at the gym, I will do 2 min mobility"</li><li>"After I finish training, I will immediately drink my recovery shake"</li><li>"After I brush teeth, I will take magnesium glycinate"</li><li>Specificity is everything. Vague intentions fail. Precise behavioral anchors succeed.</li></ul></div></div>
+      <div class="pcard"><div class="pcard-h"><div class="pnum">2</div><div class="ptitle">Reward Timing &#8212; Immediate Celebration</div></div><div class="pbody"><div class="pmech"><strong>Mechanism:</strong> Dopamine must fire immediately after the behavior &#8212; not hours later. The basal ganglia care about the 3-second window. B.J. Fogg's research found immediate celebration dramatically accelerates habit formation.</div><ul class="pbullets"><li>Celebrate immediately after each target behavior rep: fist pump, verbal 'done,' felt satisfaction</li><li>For training: celebrate after completing hard sets, intervals, or full sessions</li><li>A tiny celebration gets the same dopamine reinforcement as a large one. That's the point.</li></ul></div></div>
+      <div class="pcard"><div class="pcard-h"><div class="pnum">3</div><div class="ptitle">Dopamine Hygiene</div></div><div class="pbody"><div class="pmech"><strong>Mechanism:</strong> Large dopamine spikes from cheap sources (social media, pornography, sugar) recalibrate the reward system downward &#8212; making genuine achievement feel less rewarding. Protect your dopamine baseline before training.</div><ul class="pbullets"><li>No social media scrolling in the first 30 min after waking</li><li>Save highest-reward activities for after your most important work</li><li>Let anticipation of the reward drive effort &#8212; don't pre-load the reward before effort begins</li></ul></div></div>
+      <div class="pcard"><div class="pcard-h"><div class="pnum">4</div><div class="ptitle">Schedule Consistency</div></div><div class="pbody"><div class="pmech"><strong>Mechanism:</strong> Same training time, same place, same ritual = powerful cue structure the basal ganglia use to pre-initiate training behavior automatically &#8212; with less PFC drag.</div><ul class="pbullets"><li>Fixed training time, protected like your most important appointment</li><li>Consistent pre-training ritual: same music, warm-up, mental prep sequence</li><li>Train in the same location when possible</li><li>When schedule changes, recreate as many ritual elements as possible</li></ul></div></div>
+      <div class="pcard"><div class="pcard-h"><div class="pnum">5</div><div class="ptitle">Diet for Dopamine &#8212; Tyrosine-Rich Foods</div></div><div class="pbody"><div class="pmech"><strong>Mechanism:</strong> Dopamine is synthesized from tyrosine. A 2015 meta-analysis found tyrosine improved cognitive flexibility under high-stress, high-demand conditions &#8212; precisely when dopamine gets depleted.</div><ul class="pbullets"><li>High-tyrosine foods: chicken, turkey, eggs, fish, beef, pumpkin seeds, almonds</li><li>Include tyrosine-rich protein source in your pre-training meal</li><li>L-tyrosine supplement: 500&#8211;2000mg, 30&#8211;60 min pre-performance on empty stomach</li><li>Pair with B vitamins (B6, B9, B12) &#8212; required cofactors for dopamine synthesis</li></ul></div></div>
+    </div>
+    <div class="ch-sum">
+      <span class="slbl">Chapter Summary</span>
+      <div class="stitle">Your habits are not your character &#8212; they're your architecture.</div>
+      <div class="ch-insight">"Stack habits. Celebrate immediately. Guard your dopamine. Stay consistent. Feed the system."</div>
+      <p style="margin-top:20px;font-family:'Space Grotesk',sans-serif;font-size:15px;color:#fff;border-top:1px solid rgba(255,255,255,.15);padding-top:16px;margin-bottom:0;"><strong style="color:var(--accent);">KEY TAKEAWAY:</strong> Your most powerful habit change isn't willpower — it's architecture. This week, attach one new performance behavior to an existing daily habit using the "After X, I will Y" format.</p>
+    </div>
+  </div>
+</div>
+
+<!-- PART 2 -->
+<div class="part-break" id="part2">
+  <div class="pb-label">Part Two</div>
+  <h2>The Learning Machine</h2>
+  <p class="pb-regions">Hippocampus &middot; Temporal Lobe</p>
+</div>
+
+<!-- CHAPTER 4 -->
+<div class="chapter" id="ch4" style="background:var(--light);">
+  <div class="pw">
+    <div class="ch-hdr">
+      <span class="ch-num">Chapter 04</span>
+      <h1>Hippocampus<span class="ch-sub">The Learning Accelerator</span></h1>
+    </div>
+    <p style="font-size:18px;font-weight:500;color:var(--accent-dark);line-height:1.6;margin-bottom:32px;border-left:4px solid var(--accent);padding-left:20px;">If coaching doesn't stick, skills take longer to automate than they should, or you plateau despite consistent effort &#8212; your hippocampus is the learning accelerator to upgrade.</p>
+    <h2>What It Is</h2>
+    <p>Curled deep in the medial temporal lobe, the hippocampus is your brain's primary memory-formation hub. Your brain generates new neurons here throughout your lifetime &#8212; neurogenesis &#8212; and we know exactly what controls it. Your hippocampus converts short-term experiences into long-term memories during sleep, and new neurons improve pattern recognition, cognitive flexibility, and coaching uptake.</p>
+    <h2>Why Aerobic Exercise Literally Grows Your Brain</h2>
+    <p>In 1999, researchers discovered running mice had measurably more new hippocampal neurons than sedentary mice. A 2011 study by Erickson et al. confirmed this in humans: 6 months of aerobic exercise increased hippocampal volume by 2% &#8212; reversing 1&#8211;2 years of age-related shrinkage. The mechanism: aerobic exercise dramatically elevates Brain-Derived Neurotrophic Factor (BDNF) &#8212; "Miracle-Gro for the brain." Exercise is the most potent natural trigger for it.</p>
+    <div class="pgrid">
+      <div class="pcard"><div class="pcard-h"><div class="pnum">1</div><div class="ptitle">Zone 2 Cardio for BDNF</div></div><div class="pbody"><div class="pmech"><strong>Mechanism:</strong> Zone 2 aerobic exercise (60&#8211;70% max HR) produces the highest sustained BDNF output. John Ratey calls this the 'sweet spot' for neurogenesis. High-intensity work produces adrenaline that partially suppresses hippocampal BDNF &#8212; Zone 2 keeps the signal elevated throughout.</div><ul class="pbullets"><li>3&#8211;4 sessions per week, 30&#8211;60 min at Zone 2 (60&#8211;70% max HR)</li><li>Talk test: full sentences, slightly effortful</li><li>Learn immediately after Zone 2 &#8212; BDNF stays elevated 30&#8211;60 min post-exercise</li><li>Best modalities: running, cycling, swimming, rowing</li></ul></div></div>
+      <div class="pcard"><div class="pcard-h"><div class="pnum">2</div><div class="ptitle">REM Sleep Optimization</div></div><div class="pbody"><div class="pmech"><strong>Mechanism:</strong> REM sleep is when the hippocampus replays the day's experiences to the cortex, consolidating learning. Cut REM short, and the previous day's learning is incomplete. EEG studies confirm hippocampal replay sequences during REM mirror waking learning sequences.</div><ul class="pbullets"><li>Protect the last 2 hours of sleep &#8212; REM concentrates in final sleep cycles</li><li>No alcohol: even 2 drinks reduces REM by 20&#8211;25%</li><li>Cool, dark, quiet sleeping conditions for optimal sleep architecture</li><li>Sleep a full night immediately after learning critical material &#8212; that night matters most</li><li>20-min post-learning nap also boosts hippocampal consolidation</li></ul></div></div>
+      <div class="pcard"><div class="pcard-h"><div class="pnum">3</div><div class="ptitle">Omega-3/DHA Supplementation</div></div><div class="pbody"><div class="pmech"><strong>Mechanism:</strong> DHA is the most abundant omega-3 in the brain, essential for hippocampal membrane fluidity and neurogenesis. Low DHA reduces BDNF expression and impairs memory formation. A 2012 study found DHA supplementation increased BDNF and improved spatial learning.</div><ul class="pbullets"><li>Target: 1&#8211;3g combined EPA+DHA daily</li><li>Fatty fish (salmon, sardines, mackerel) 2&#8211;3x/week</li><li>Supplement: high-quality fish oil or algae-based omega-3</li><li>Take with fat-containing meals for better absorption</li><li>Allow 4&#8211;8 weeks for measurable cognitive effects</li></ul></div></div>
+      <div class="pcard"><div class="pcard-h"><div class="pnum">4</div><div class="ptitle">Novel Skill Learning</div></div><div class="pbody"><div class="pmech"><strong>Mechanism:</strong> Your hippocampus is most active during genuinely new information acquisition. Repetition of learned skills primarily activates the basal ganglia. Novelty keeps hippocampal neurogenesis robust and cognitive flexibility sharp.</div><ul class="pbullets"><li>Commit to one genuinely new skill per quarter &#8212; outside your current expertise</li><li>For athletes: cross-train in a different sport or add an entirely new skill element</li><li>Key variable: genuine challenge and novelty &#8212; comfortable familiar activity doesn't drive the same hippocampal engagement</li><li><strong>HOW TO START TODAY:</strong> Schedule a single 60-min session this week in a skill you've never tried. Book it now — decision latency kills follow-through.</li></ul></div></div>
+      <div class="pcard"><div class="pcard-h"><div class="pnum">5</div><div class="ptitle">Alcohol Awareness</div></div><div class="pbody"><div class="pmech"><strong>Mechanism:</strong> Alcohol suppresses BDNF, disrupts REM sleep, and with chronic use directly damages hippocampal neurons. A 2017 BMJ study found even moderate drinking (14&#8211;21 units/week) was associated with hippocampal atrophy.</div><ul class="pbullets"><li>No alcohol the night before important learning or skill training sessions</li><li>In learning-intensive training blocks: 0&#8211;2 drinks/week maximum</li><li>Even 2 drinks reduces consolidation of content learned that day</li><li>This is pure performance &#8212; alcohol and learning are antagonists</li></ul></div></div>
+    </div>
+    <div class="ch-sum">
+      <span class="slbl">Chapter Summary</span>
+      <div class="stitle">Your hippocampus is both a memory bank and a living factory.</div>
+      <div class="ch-insight">"Exercise grows your brain. Sleep seals the learning. Feed it DHA. Challenge it with novelty. Protect it from alcohol."</div>
+      <p style="margin-top:20px;font-family:'Space Grotesk',sans-serif;font-size:15px;color:#fff;border-top:1px solid rgba(255,255,255,.15);padding-top:16px;margin-bottom:0;"><strong style="color:var(--accent);">KEY TAKEAWAY:</strong> Aerobic exercise is the most powerful tool you have for growing your learning capacity. Do 30 minutes of Zone 2 cardio this week, then immediately review a skill or coaching point while your BDNF is elevated.</p>
+    </div>
+  </div>
+</div>
+
+<!-- CHAPTER 5 -->
+<div class="chapter" id="ch5">
+  <div class="pw">
+    <div class="ch-hdr">
+      <span class="ch-num">Chapter 05</span>
+      <h1>Temporal Lobe<span class="ch-sub">The Coaching Receiver</span></h1>
+    </div>
+    <p style="font-size:18px;font-weight:500;color:var(--accent-dark);line-height:1.6;margin-bottom:32px;border-left:4px solid var(--accent);padding-left:20px;">If coaching takes multiple sessions to stick, your self-talk undermines execution, or you struggle to retain verbal instructions under pressure &#8212; your temporal lobe processing speed is the bottleneck.</p>
+    <h2>What It Is</h2>
+    <p>Stretching along the sides of your brain, the temporal lobes handle language, auditory processing, semantic memory, and complex sensory integration. For athletes, the temporal lobe is your <strong>coaching receiver</strong> &#8212; determining how efficiently you extract, process, and retain information from coaches, instructors, and your own self-talk. The path from verbal instruction to motor learning runs directly through this region.</p>
+    <h2>How Elite Athletes Absorb Coaching Faster</h2>
+    <p>A 2014 study comparing elite and recreational tennis players found that experts showed faster neural responses to both auditory and visual cues &#8212; their temporal lobe processing was faster and more selective. Elite performers don't just have better physical conditioning. They have better coaching uptake. This temporal lobe efficiency is trainable.</p>
+    <div class="pgrid">
+      <div class="pcard"><div class="pcard-h"><div class="pnum">1</div><div class="ptitle">Active Listening Techniques</div></div><div class="pbody"><div class="pmech"><strong>Mechanism:</strong> Active listening activates the full temporal network including Wernicke's area, hippocampus, and PFC. Deeper processing creates stronger neural traces and dramatically better retention than passive hearing.</div><ul class="pbullets"><li>During coaching: phone away, 100% attentional focus</li><li>After each instruction: paraphrase in your own words before acting</li><li>Ask one clarifying question per major coaching point</li><li>Post-session: within 5 min, write the 2&#8211;3 key coaching points</li></ul></div></div>
+      <div class="pcard"><div class="pcard-h"><div class="pnum">2</div><div class="ptitle">Music and Rhythm Training</div></div><div class="pbody"><div class="pmech"><strong>Mechanism:</strong> Musical training produces measurable temporal lobe structural changes. Beat synchronization: music at appropriate BPM improves endurance performance by 10&#8211;15% through motivational and temporal entrainment effects.</div><ul class="pbullets"><li>Train with rhythmically appropriate music matching effort level (120&#8211;170 BPM)</li><li>Sport-specific: rhythm drills, metronome work, cadence training</li><li>Even 15 min/day of any instrument builds temporal lobe networks</li><li>During skill drills: count rhythms or use verbal timing cues</li></ul></div></div>
+      <div class="pcard"><div class="pcard-h"><div class="pnum">3</div><div class="ptitle">Verbal Rehearsal and Self-Talk</div></div><div class="pbody"><div class="pmech"><strong>Mechanism:</strong> Inner speech is processed through the same temporal networks as external speech. A meta-analysis of 47 studies found instructional self-talk reduced technical errors by 15&#8211;25% in technique-dependent tasks.</div><ul class="pbullets"><li>Develop 1&#8211;2 personal cue words for each key technical skill</li><li>Use instructional cues during practice reps ('loose,' 'drive,' 'smooth')</li><li>Pre-performance verbal sequence: one specific execution-focused statement</li><li>Under pressure: cue words re-engage the temporal-to-motor pathway</li></ul></div></div>
+      <div class="pcard"><div class="pcard-h"><div class="pnum">4</div><div class="ptitle">Audiobooks and Podcasts for Passive Priming</div></div><div class="pbody"><div class="pmech"><strong>Mechanism:</strong> Expert audio builds conceptual schemas in temporal semantic memory. Richer schemas mean new coaching information slots in faster &#8212; accelerating learning uptake.</div><ul class="pbullets"><li>1&#8211;2 hrs/week: coaching breakdowns, performance science, sport-specific experts</li><li>Commute listening is ideal timing</li><li>After listening: write one sentence summarizing the key insight</li><li>Huberman Lab, sport-specific coaching podcasts, expert interview series</li></ul></div></div>
+      <div class="pcard"><div class="pcard-h"><div class="pnum">5</div><div class="ptitle">Social Interaction as Workout</div></div><div class="pbody"><div class="pmech"><strong>Mechanism:</strong> Face-to-face interaction simultaneously processes voice, expression, and emotional tone &#8212; one of the most complex temporal lobe tasks. Regular high-quality social interaction maintains temporal processing speed and emotional intelligence.</div><ul class="pbullets"><li>Prioritize in-person over digital communication when possible</li><li>Schedule 2&#8211;3 genuine social engagements per week</li><li>Practice high-quality conversation: real questions, active listening, no phone</li><li>Team debriefs and feedback sessions build temporal capacity AND accelerate learning</li><li><strong>HOW TO START TODAY:</strong> Put your phone away for one full conversation today and actively paraphrase what the other person says. Temporal workout complete.</li></ul></div></div>
+    </div>
+    <div class="ch-sum">
+      <span class="slbl">Chapter Summary</span>
+      <div class="stitle">The temporal lobe: decoder ring between information and performance.</div>
+      <div class="ch-insight">"Listen actively. Train with rhythm. Talk yourself through it. Absorb expert knowledge. Stay socially sharp."</div>
+      <p style="margin-top:20px;font-family:'Space Grotesk',sans-serif;font-size:15px;color:#fff;border-top:1px solid rgba(255,255,255,.15);padding-top:16px;margin-bottom:0;"><strong style="color:var(--accent);">KEY TAKEAWAY:</strong> After your next coaching session, spend 5 minutes writing the 2-3 key points in your own words. That single habit doubles retention — starting today.</p>
+    </div>
+  </div>
+</div>
+
+<!-- PART 3 -->
+<div class="part-break" id="part3">
+  <div class="pb-label">Part Three</div>
+  <h2>The Body-Brain Interface</h2>
+  <p class="pb-regions">Cerebellum &middot; Amygdala &middot; Brain Stem</p>
+</div>
+
+<!-- CHAPTER 6 -->
+<div class="chapter" id="ch6" style="background:var(--light);">
+  <div class="pw">
+    <div class="ch-hdr">
+      <span class="ch-num">Chapter 06</span>
+      <h1>Cerebellum<span class="ch-sub">The Precision Engine</span></h1>
+    </div>
+    <p style="font-size:18px;font-weight:500;color:var(--accent-dark);line-height:1.6;margin-bottom:32px;border-left:4px solid var(--accent);padding-left:20px;">If your technique breaks down under fatigue, skills plateau despite high training volume, or movement feels mechanical under pressure &#8212; your cerebellum needs deliberate attention.</p>
+    <h2>What It Is</h2>
+    <p>At the back of your skull, the cerebellum houses more neurons than the rest of the brain combined. Its job: precision. It fine-tunes every movement by comparing what your motor cortex intended with what your proprioceptors report &#8212; correcting in real time with millisecond accuracy. It's the primary site of motor learning &#8212; the neural substrate of "muscle memory."</p>
+    <h2>Why Deliberate Practice Beats Raw Hours</h2>
+    <p>The cerebellum requires error signals to update its internal model. Repetition without feedback grooves incorrect patterns. This is why 10,000 hours of <em>deliberate practice</em> &#8212; near-edge-of-ability, with feedback &#8212; produces expertise, while 10,000 hours of mindless repetition does not.</p>
+    <h2>Visualization Science</h2>
+    <p>Vivid visualization activates the motor cortex and cerebellum in patterns that closely mirror actual execution. Pascual-Leone et al. (1995) found mental rehearsal of a piano sequence produced similar cerebellar changes as physical practice. Visualization is neurological training &#8212; not motivational psychology.</p>
+    <div class="pgrid">
+      <div class="pcard"><div class="pcard-h"><div class="pnum">1</div><div class="ptitle">Deliberate Practice with Feedback Loops</div></div><div class="pbody"><div class="pmech"><strong>Mechanism:</strong> Error signals drive cerebellar motor refinement. Every caught-and-corrected error is a cerebellar training stimulus.</div><ul class="pbullets"><li>Break skills into smallest components; work at edge of ability</li><li>Immediate feedback each rep: coach, video review, or measurable outcome</li><li>Target 70&#8211;80% execution accuracy &#8212; too easy = no challenge</li><li>20&#8211;30 min of full-focus beats 2 hrs of distracted repetition</li><li>Video yourself &#8212; watching your own movement activates cerebellar error-correction</li></ul></div></div>
+      <div class="pcard"><div class="pcard-h"><div class="pnum">2</div><div class="ptitle">Proprioception Training</div></div><div class="pbody"><div class="pmech"><strong>Mechanism:</strong> Cerebellar precision depends on the quality of proprioceptive input. Better sensory input = better cerebellar calibration = more precise movement output.</div><ul class="pbullets"><li>Single-leg balance: 3 sets x 30&#8211;60 sec per leg, progressing to eyes closed</li><li>Unstable surface training: BOSU ball, wobble board, barefoot on varied terrain</li><li>Agility ladder drills for rapid, precise foot placement challenges</li><li>5&#8211;10 min balance work as warm-up, 3&#8211;4x/week</li></ul></div></div>
+      <div class="pcard"><div class="pcard-h"><div class="pnum">3</div><div class="ptitle">Mental Rehearsal / Visualization</div></div><div class="pbody"><div class="pmech"><strong>Mechanism:</strong> Vivid first-person visualization activates cerebellar motor programs during imagined execution. The more kinesthetically specific, the stronger the cerebellar training effect.</div><ol class="psteps"><li>Find quiet space. Sit comfortably, close your eyes.</li><li>Relax with 3&#8211;5 slow breaths.</li><li>Visualize from first-person &#8212; feel the movement in your body, not watch from outside</li><li>Include all senses: sight, feel in muscles and joints, the sound of the movement</li><li>Visualize <em>successful</em> execution &#8212; the cerebellum builds the pattern you rehearse</li></ol></div></div>
+      <div class="pcard"><div class="pcard-h"><div class="pnum">4</div><div class="ptitle">Cross-Training for Motor Richness</div></div><div class="pbody"><div class="pmech"><strong>Mechanism:</strong> Athletes trained across multiple movement modalities have more sophisticated cerebellar maps &#8212; better balance, faster skill acquisition, superior injury resistance. The neurological basis of the 'athletic base.'</div><ul class="pbullets"><li>Include one different movement modality weekly: yoga, martial arts, gymnastics, dance, climbing</li><li>For specialized athletes: add rotation and overhead components if your sport lacks them</li><li>Consider annual 3&#8211;4 week cross-training blocks for cerebellar novelty</li><li><strong>HOW TO START TODAY:</strong> Add one 30-min session this week in a modality completely different from your primary sport. Any novel movement counts — your cerebellum rewards variety immediately.</li></ul></div></div>
+      <div class="pcard"><div class="pcard-h"><div class="pnum">5</div><div class="ptitle">Rest Windows for Consolidation</div></div><div class="pbody"><div class="pmech"><strong>Mechanism:</strong> Motor memory consolidation &#8212; transferring newly learned patterns to stable cerebellar engrams &#8212; happens during rest and sleep. Walker and Stickgold showed sleep-dependent consolidation accounts for 20&#8211;30% performance improvement with no additional practice.</div><ul class="pbullets"><li>Rest or low intensity the day after high-volume technical practice</li><li>Sleep quality determines motor consolidation &#8212; slow-wave sleep is critical</li><li>Don't stack multiple highly technical sessions without sleep between them</li><li>'Offline' learning is real &#8212; sometimes you wake up better. That's the cerebellum.</li></ul></div></div>
+    </div>
+    <div class="ch-sum">
+      <span class="slbl">Chapter Summary</span>
+      <div class="stitle">Quality reps, clear feedback, sensory richness, and rest to consolidate.</div>
+      <div class="ch-insight">"Practice deliberately with feedback. Train balance. Visualize vividly. Cross-train. Sleep to consolidate."</div>
+      <p style="margin-top:20px;font-family:'Space Grotesk',sans-serif;font-size:15px;color:#fff;border-top:1px solid rgba(255,255,255,.15);padding-top:16px;margin-bottom:0;"><strong style="color:var(--accent);">KEY TAKEAWAY:</strong> Twenty focused minutes with immediate feedback beats two hours of mindless repetition. Tonight before bed, spend 5 minutes visualizing tomorrow's key skill in first-person — your cerebellum will consolidate it while you sleep.</p>
+    </div>
+  </div>
+</div>
+
+<!-- CHAPTER 7 -->
+<div class="chapter" id="ch7">
+  <div class="pw">
+    <div class="ch-hdr">
+      <span class="ch-num">Chapter 07</span>
+      <h1>Amygdala<span class="ch-sub">The Threat Processor</span></h1>
+    </div>
+    <p style="font-size:18px;font-weight:500;color:var(--accent-dark);line-height:1.6;margin-bottom:32px;border-left:4px solid var(--accent);padding-left:20px;">If nerves kill your performance, you choke on the big stage, or overtraining leaves you anxious and burned out &#8212; your amygdala is running the show when it shouldn't be.</p>
+    <h2>What It Is</h2>
+    <p>Two almond-shaped clusters of neurons buried in the medial temporal lobe &#8212; the amygdalae are your threat detection system. When they detect danger (real or perceived), they trigger the stress response: cortisol, adrenaline, heart rate acceleration, and a cognitive shift from PFC-led rational thinking to rapid, survival-oriented behavior. In ancestral environments, lifesaving. In competitive performance environments, potentially catastrophic.</p>
+    <h2>The Choking Problem</h2>
+    <p>Choking under pressure is largely an amygdala phenomenon. High amygdala activation causes two problems: <strong>PFC hijacking</strong> (reduced working memory and decision quality) and <strong>cerebellar bypass</strong> (motor control shifts from smooth automatic cerebellar programs to slow, mechanical cortical control). The choke is literal &#8212; you're over-thinking movements that normally run automatically.</p>
+    <h2>Train Your Stress Response &#8212; Don't Eliminate It</h2>
+    <p>Research by Wendy Mendes distinguishes <strong>threat state</strong> (demand exceeds perceived resources &#8212; performance degrades) from <strong>challenge state</strong> (demand is high but resources feel adequate &#8212; performance enhances). The goal isn't to eliminate stress &#8212; it's to shift your default interpretation from threat to challenge, through building a learned history of handling difficult situations successfully.</p>
+    <div class="pgrid">
+      <div class="pcard"><div class="pcard-h"><div class="pnum">1</div><div class="ptitle">Box Breathing &#8212; 4-4-4-4</div></div><div class="pbody"><div class="pmech"><strong>Mechanism:</strong> Slow, controlled breathing activates the vagus nerve, stimulates parasympathetic activity, reduces cortisol, and directly dampens amygdala firing. Used by Navy SEALs, surgeons, and elite athletes for high-pressure performance.</div><ol class="psteps"><li>Exhale completely to empty your lungs</li><li>Inhale through your nose for 4 counts</li><li>Hold at the top for 4 counts</li><li>Exhale for 4 counts</li><li>Hold empty for 4 counts &#8212; repeat 4&#8211;6 cycles (about 2 minutes)</li></ol></div></div>
+      <div class="pcard"><div class="pcard-h"><div class="pnum">2</div><div class="ptitle">Progressive Stress Exposure</div></div><div class="pbody"><div class="pmech"><strong>Mechanism:</strong> Every time you enter a high-stress situation and execute successfully, you build a cortical memory of handling it &#8212; reducing amygdala reactivity to similar situations in future. The amygdala learns from experience.</div><ul class="pbullets"><li>Create progressively challenging practice environments simulating competitive pressure</li><li>Time pressure, audience observation, fewer attempts, consequences for failure</li><li>Tournament simulation: practice under full competition conditions regularly</li><li>Gradually escalate stakes: intrasquad &#8594; local &#8594; regional &#8594; national</li></ul></div></div>
+      <div class="pcard"><div class="pcard-h"><div class="pnum">3</div><div class="ptitle">Chronic Stress Management</div></div><div class="pbody"><div class="pmech"><strong>Mechanism:</strong> Chronic stress increases amygdala reactivity while simultaneously impairing PFC regulation &#8212; creating the vicious cycle of overtraining and burnout. The amygdala doesn't distinguish between training stress and life stress. Both drain the same bucket.</div><ul class="pbullets"><li>Track HRV daily &#8212; declining trend over 5&#8211;7 days indicates accumulated stress</li><li>When HRV drops 10%+ below 7-day average: prioritize recovery over training intensity</li><li>Active recovery: Zone 1 movement, massage, sauna</li><li>Social connection: oxytocin from positive interaction directly inhibits cortisol release</li></ul></div></div>
+      <div class="pcard"><div class="pcard-h"><div class="pnum">4</div><div class="ptitle">Journaling for Threat Externalization</div></div><div class="pbody"><div class="pmech"><strong>Mechanism:</strong> Naming a threat in words reduces amygdala activation. Lieberman et al. (2007) showed that naming emotions on a face significantly reduced amygdala response. 'Affect labeling' is a measurable amygdala regulation tool. Journaling applies this to performance anxiety.</div><ul class="pbullets"><li>Pre-competition (10 min): write what you're feeling; name the fears specifically; then write your preparation, capability, and plan</li><li>Post-competition: what went well; what to adjust; what you're proud of</li><li>General stress journaling 10 min, 3x/week &#8212; getting stress out of the monitoring loop reduces baseline amygdala activation</li></ul></div></div>
+      <div class="pcard"><div class="pcard-h"><div class="pnum">5</div><div class="ptitle">Cold/Heat Contrast Training</div></div><div class="pbody"><div class="pmech"><strong>Mechanism:</strong> Repeated temperature extremes provide a controlled physiological stressor the amygdala learns to regulate. With repeated exposure, the default response shifts: 'uncomfortable but not dangerous, and it ends soon.' This trains remaining cognitively functional while physiologically stressed.</div><ul class="pbullets"><li>Cold immersion (57&#176;F/14&#176;C): 2&#8211;4 min, 3&#8211;4x/week, building up from shorter durations</li><li>Sauna: 15&#8211;20 min at 170&#8211;190&#176;F, immediately followed by cold</li><li>During cold: keep breathing slow and deliberate; be present in the discomfort</li><li>Advanced: perform cognitive tasks (arithmetic, verbal recall) during cold &#8212; trains PFC function under acute stress</li></ul></div></div>
+    </div>
+    <div class="ch-sum">
+      <span class="slbl">Chapter Summary</span>
+      <div class="stitle">The amygdala needs sophisticated management for a performance context.</div>
+      <div class="ch-insight">"Breathe deliberately. Expose progressively. Manage chronic load. Journal the fear. Embrace the cold."</div>
+      <p style="margin-top:20px;font-family:'Space Grotesk',sans-serif;font-size:15px;color:#fff;border-top:1px solid rgba(255,255,255,.15);padding-top:16px;margin-bottom:0;"><strong style="color:var(--accent);">KEY TAKEAWAY:</strong> Your goal isn't to eliminate stress — it's to shift from threat to challenge. Before your next high-pressure session, run 4-6 cycles of 4-4-4-4 box breathing and write one sentence about your preparation. Those two minutes rewire your stress response.</p>
+    </div>
+  </div>
+</div>
+
+<!-- CHAPTER 8 -->
+<div class="chapter" id="ch8" style="background:var(--light);">
+  <div class="pw">
+    <div class="ch-hdr">
+      <span class="ch-num">Chapter 08</span>
+      <h1>Brain Stem<span class="ch-sub">The Foundation</span></h1>
+    </div>
+    <p style="font-size:18px;font-weight:500;color:var(--accent-dark);line-height:1.6;margin-bottom:32px;border-left:4px solid var(--accent);padding-left:20px;">If your HRV trends down during training blocks, you never feel truly recovered, or fatigue arrives earlier than your fitness should allow &#8212; your autonomic foundation needs rebuilding from the ground up.</p>
+    <h2>What It Is</h2>
+    <p>Beneath the cerebral cortex, your brain stem connects to your spinal cord and controls the autonomic functions that keep you alive: breathing, heart rate, blood pressure, sleep-wake cycles. Its activity never stops. Every performance system in your brain depends on the brain stem's autonomic baseline being stable. Fix the foundation, and everything above it works better.</p>
+    <h2>HRV as Your Performance Biomarker</h2>
+    <p>Heart Rate Variability (HRV) &#8212; the variation between successive heartbeats &#8212; is the most accessible window into brain stem autonomic function. High HRV = healthy parasympathetic/sympathetic balance. Low HRV = accumulated stress, reduced resilience. Track it daily with a wearable (WHOOP, Garmin, Oura) or free app. When HRV drops 10%+ below your 7-day average, prioritize recovery over intensity.</p>
+    <div class="pgrid">
+      <div class="pcard"><div class="pcard-h"><div class="pnum">1</div><div class="ptitle">Nasal Breathing</div></div><div class="pbody"><div class="pmech"><strong>Mechanism:</strong> Nasal breathing filters and humidifies air, produces nitric oxide that dilates airways, and drives a slower, diaphragm-led pattern that activates the parasympathetic nervous system via the vagus nerve. James Nestor's research showed 10 days of nasal-only breathing dramatically improved HRV, sleep quality, and endurance markers.</div><ul class="pbullets"><li>Practice nasal-only breathing during Zone 1&#8211;2 exercise</li><li>If you can't breathe nasally at a given intensity &#8212; you're going too fast for aerobic training</li><li>Sleep with your mouth closed &#8212; use medical-grade mouth tape if you're a chronic mouth breather</li><li>Become conscious of when you're mouth breathing during the day and switch back</li></ul></div></div>
+      <div class="pcard"><div class="pcard-h"><div class="pnum">2</div><div class="ptitle">Neck Mobility Work</div></div><div class="pbody"><div class="pmech"><strong>Mechanism:</strong> The vagus nerve exits the skull through the neck. Restricted neck mobility and chronic forward head posture impair vagal tone. The densely proprioceptive suboccipital muscles create a constant sympathetic activation signal when chronically tense.</div><ul class="pbullets"><li>Daily 5-min circuit: chin tucks, lateral bends (ear to shoulder), rotation, suboccipital release (tennis ball against wall)</li><li>For every hour of desk work: 5 min chin tucks and thoracic extension</li><li>Avoid phone use with head down &#8212; 'text neck' at 30&#176; multiplies effective head weight from 12 to 40 lbs</li></ul></div></div>
+      <div class="pcard"><div class="pcard-h"><div class="pnum">3</div><div class="ptitle">Sleep Schedule Consistency &#8212; Circadian Anchoring</div></div><div class="pbody"><div class="pmech"><strong>Mechanism:</strong> The brain stem's suprachiasmatic nucleus (SCN) orchestrates every physiological process. The most powerful SCN anchor is light exposure &#8212; bright light in the first hour of waking, darkness in the final hours before sleep.</div><ul class="pbullets"><li>Same wake time &#177;30 min, 7 days/week &#8212; even weekends (social jet lag disrupts SCN)</li><li>Bright light exposure within 30 min of waking &#8212; go outside or use a 10,000-lux light therapy box</li><li>Darkness 90 min before bed: blackout curtains, blue-light glasses, dimmed screens</li><li>Eat your largest meals during daylight hours &#8212; meal timing supports circadian rhythm</li></ul></div></div>
+      <div class="pcard"><div class="pcard-h"><div class="pnum">4</div><div class="ptitle">Magnesium Glycinate</div></div><div class="pbody"><div class="pmech"><strong>Mechanism:</strong> Magnesium is a cofactor in 300+ enzymatic reactions including ATP production and GABA activity. Athletes frequently have suboptimal levels due to sweat loss and high metabolic demand. A 2017 meta-analysis found magnesium supplementation significantly improved sleep quality and efficiency.</div><ul class="pbullets"><li>Dose: 300&#8211;400mg elemental magnesium as magnesium glycinate per day</li><li>Timing: 60 min before bed &#8212; the calming effect supports sleep onset and deep sleep</li><li>Avoid magnesium oxide (cheap, poorly absorbed, causes GI distress)</li><li>Food sources: dark leafy greens, pumpkin seeds, almonds, dark chocolate, black beans</li></ul></div></div>
+      <div class="pcard"><div class="pcard-h"><div class="pnum">5</div><div class="ptitle">Diaphragmatic Breathing / Vagus Nerve Activation</div></div><div class="pbody"><div class="pmech"><strong>Mechanism:</strong> Deep diaphragmatic breathing physically stimulates vagal afferents with each breath cycle, generating parasympathetic activation throughout the body. The exhale is more potent than the inhale &#8212; extending the exhale maximizes vagal activation.</div><ol class="psteps"><li>Inhale through your nose for 4 counts</li><li>Exhale slowly for 6&#8211;8 counts (continuous flow, no holding)</li><li>Continue for 5 minutes</li><li>Use post-training (accelerates parasympathetic recovery), pre-sleep, and between competition efforts</li></ol></div></div>
+    </div>
+    <div class="ch-sum">
+      <span class="slbl">Chapter Summary</span>
+      <div class="stitle">The brain stem is the silent foundation of all performance.</div>
+      <div class="ch-insight">"Breathe through your nose. Free your neck. Anchor your sleep schedule. Supplement magnesium. Activate your vagus nerve."</div>
+      <p style="margin-top:20px;font-family:'Space Grotesk',sans-serif;font-size:15px;color:#fff;border-top:1px solid rgba(255,255,255,.15);padding-top:16px;margin-bottom:0;"><strong style="color:var(--accent);">KEY TAKEAWAY:</strong> Your autonomic baseline determines your recovery ceiling. Tonight: take 300mg of magnesium glycinate 60 minutes before bed. This week: switch to nasal-only breathing during Zone 1-2 training. Two habits, massive foundation impact.</p>
+    </div>
+  </div>
+</div>
+
+<!-- PART 4 -->
+<div class="part-break" id="part4">
+  <div class="pb-label">Part Four</div>
+  <h2>The Gatekeeper</h2>
+  <p class="pb-regions">Thalamus</p>
+</div>
+
+<!-- CHAPTER 9 -->
+<div class="chapter" id="ch9">
+  <div class="pw">
+    <div class="ch-hdr">
+      <span class="ch-num">Chapter 09</span>
+      <h1>Thalamus<span class="ch-sub">The Attention Architect</span></h1>
+    </div>
+    <p style="font-size:18px;font-weight:500;color:var(--accent-dark);line-height:1.6;margin-bottom:32px;border-left:4px solid var(--accent);padding-left:20px;">If distractions derail focus mid-session, noisy environments destroy your performance, or you can't sustain deep concentration when it matters most &#8212; your thalamic attention filter is the system to sharpen.</p>
+    <h2>What It Is</h2>
+    <p>Deep in the center of your brain, the thalamus is your brain's central switching station. Nearly all sensory information passes through it before reaching the cortex. Every moment, you receive millions of sensory signals &#8212; the thalamus decides which ones reach conscious awareness and which get filtered out. This makes it your attention gatekeeper.</p>
+    <h2>Why Your Environment Determines Your Focus</h2>
+    <p>The thalamus's filtering is controlled by top-down signals from the PFC. A calm, rested, meditation-trained brain filters distractions far more effectively than a tired, stressed one. A noisy, cluttered, notification-filled environment forces the thalamus to process and suppress millions of competing signals &#8212; consuming resources that would otherwise support deep focus. Design your environment, and you design your focus.</p>
+    <h2>Sleep Spindles and Next-Day Performance</h2>
+    <p>Sleep spindles &#8212; brief bursts of rapid neural oscillations generated by the thalamus during Stage 2 NREM sleep &#8212; are the primary mechanism for gating sensory disruptions during sleep AND for transferring motor and procedural memories to long-term storage. More spindles = better consolidation = better next-day performance. They're maximized by consistent sleep schedules, cool sleeping environments, and magnesium.</p>
+    <div class="pgrid">
+      <div class="pcard"><div class="pcard-h"><div class="pnum">1</div><div class="ptitle">Sleep Quality Optimization</div></div><div class="pbody"><div class="pmech"><strong>Mechanism:</strong> Thalamic sleep spindles require adequate Stage 2 and Stage 3 NREM sleep, maximized by consistent schedule, cool temperature, no alcohol, and a proper wind-down routine.</div><ul class="pbullets"><li>65&#8211;68&#176;F (18&#8211;20&#176;C) bedroom temperature maximizes NREM quality</li><li>No alcohol within 4 hours of sleep &#8212; reduces spindle density by 20&#8211;30%</li><li>Ear plugs or white noise in noisy environments &#8212; protect thalamic sensory gating during sleep</li><li>No screens 60&#8211;90 min before bed &#8212; keeps thalamus in high-alert mode when it needs to downshift</li></ul></div></div>
+      <div class="pcard"><div class="pcard-h"><div class="pnum">2</div><div class="ptitle">Sensory Training Drills</div></div><div class="pbody"><div class="pmech"><strong>Mechanism:</strong> The thalamus's filtering ability is trainable. Regular practice discriminating fine sensory detail develops more efficient thalamic filtering circuitry &#8212; faster extraction of relevant signal from noise. Part of why expert athletes 'see' the game differently.</div><ul class="pbullets"><li>Visual tracking: soft gaze scanning, reaction ball, multiple-object tracking drills</li><li>Auditory: deliberately attend to subtle environmental cues during training (footsteps, opponent breath)</li><li>Proprioceptive: eyes-closed balance work and movement replication</li><li>Dual-task training: perceptual task simultaneously with a physical skill &#8212; trains thalamic multisensory integration</li></ul></div></div>
+      <div class="pcard"><div class="pcard-h"><div class="pnum">3</div><div class="ptitle">Caffeine Timing &#8212; Adenosine Blocking</div></div><div class="pbody"><div class="pmech"><strong>Mechanism:</strong> The thalamus has high adenosine receptor density &#8212; caffeine restores thalamic gating efficiency by blocking adenosine. Delaying the first dose 60&#8211;90 min after waking prevents the afternoon energy crash that occurs when you caffeinate immediately on waking.</div><ul class="pbullets"><li>Delay first caffeine dose 60&#8211;90 min after waking &#8212; allow the morning cortisol awakening response to clear first</li><li>Last dose by 1pm to protect sleep architecture that night</li><li>High-performance days: 100&#8211;200mg at 60&#8211;90 min post-wake, optional 100&#8211;200mg at midday if needed</li></ul></div></div>
+      <div class="pcard"><div class="pcard-h"><div class="pnum">4</div><div class="ptitle">Mindfulness for Top-Down Filtering</div></div><div class="pbody"><div class="pmech"><strong>Mechanism:</strong> Mindfulness training strengthens PFC-to-thalamus signaling, improving thalamic filtering efficiency. Experienced meditators show measurably better sensory gating at the thalamic level compared to matched controls.</div><ul class="pbullets"><li>Focused Attention meditation (Chapter 1) also trains thalamic filtering as a secondary benefit</li><li>For competition-specific training: practice in mild distraction &#8212; coffee shop, gym lobby, outdoor spaces</li><li>Attentional breathing: during any activity, hold focus on one sensory channel for 30&#8211;60 sec while all else fades to background</li></ul></div></div>
+      <div class="pcard"><div class="pcard-h"><div class="pnum">5</div><div class="ptitle">Environmental Design &#8212; Sensory Hygiene</div></div><div class="pbody"><div class="pmech"><strong>Mechanism:</strong> The thalamus processes every sensory input it receives. A high-sensory-load environment taxes the filtering system continuously, consuming neural resources that would otherwise support deep focus. Design your environment, and you design your thalamic bandwidth.</div><ul class="pbullets"><li>Work in a clean, visually uncluttered environment &#8212; a clear desk supports clear thinking</li><li>Phone on DND / airplane mode during focus blocks &#8212; notifications are thalamic hijacks by design</li><li>Single-tab browsing during cognitive work &#8212; each open tab competes for processing</li><li>Before high-performance sessions: 2&#8211;3 min in genuine quiet with eyes closed &#8212; resets thalamic baseline</li><li>Train in environments that simulate competition &#8212; thalamic habituation reduces sensory load during performance</li></ul></div></div>
+    </div>
+    <div class="ch-sum">
+      <span class="slbl">Chapter Summary</span>
+      <div class="stitle">Control what gets through to your mind and your focus becomes a precision instrument.</div>
+      <div class="ch-insight">"Optimize sleep architecture. Train your senses. Time caffeine. Meditate for top-down control. Design your sensory environment."</div>
+      <p style="margin-top:20px;font-family:'Space Grotesk',sans-serif;font-size:15px;color:#fff;border-top:1px solid rgba(255,255,255,.15);padding-top:16px;margin-bottom:0;"><strong style="color:var(--accent);">KEY TAKEAWAY:</strong> Your environment is your focus system. Right now: phone on DND, clear your workspace, and do 2 minutes of silent eyes-closed breathing before the next thing on your agenda. That's thalamic reset in real time.</p>
+    </div>
+  </div>
+</div>
+
+<!-- PART 5 -->
+<div class="part-break" id="part5">
+  <div class="pb-label">Part Five</div>
+  <h2>Stacking the Protocols</h2>
+  <p class="pb-regions">The Complete System</p>
+</div>
+
+<!-- CHAPTER 10 -->
+<div class="chapter" id="ch10" style="background:var(--light);">
+  <div class="pw">
+    <div class="ch-hdr">
+      <span class="ch-num">Chapter 10</span>
+      <h1>The Complete System<span class="ch-sub">How the 9 Regions Work Together</span></h1>
+    </div>
+    <h2>The Architecture</h2>
+    <p>Your brain is one deeply interconnected system where every region communicates with every other. The <strong>brain stem</strong> is the foundation &#8212; managing autonomic state, sleep stages, and breathing efficiency. The <strong>thalamus</strong> is the gateway &#8212; determining what sensory information reaches the cortex. The <strong>amygdala</strong> is the alarm &#8212; when over-activated, it hijacks the PFC and bypasses the cerebellum. The <strong>PFC and ACC</strong> are the directors &#8212; planning, regulating, and pushing through discomfort. The <strong>basal ganglia</strong> run your automated programs. The <strong>hippocampus and temporal lobe</strong> are your learning architecture. The <strong>cerebellum</strong> executes with precision.</p>
+    <p>Neglect any one, and performance leaks somewhere in the chain. Optimize the whole system, and gains compound on each other.</p>
+    <h2>The Non-Negotiables</h2>
+    <div class="hbox"><strong>Sleep (7&#8211;9 hours, consistent schedule)</strong> &#8212; Affects every single region. PFC glymphatic maintenance. ACC motivational recovery. Basal ganglia habit consolidation. Hippocampal memory encoding. Cerebellar motor consolidation. Amygdala emotional reset. Brain stem HRV restoration. Thalamic spindle generation. A single night of inadequate sleep costs you everywhere. There is no protocol in this book that compensates for chronic sleep debt.</div>
+    <div class="hbox"><strong>Aerobic Exercise (4&#8211;5 hours/week)</strong> &#8212; Increases BDNF for hippocampal neurogenesis. Elevates norepinephrine for PFC clarity. Regulates dopamine for basal ganglia motivation. Reduces baseline cortisol protecting the amygdala. Improves vagal tone for brain stem HRV. Enhances thalamic gating via sleep quality improvement. If you do nothing else in this book: sleep properly and exercise consistently. Everything else is a multiplier.</div>
+    <h2>Morning Protocol Stack</h2>
+    <div class="pcard"><div class="pcard-h"><div class="pnum" style="width:auto;border-radius:8px;padding:4px 12px;font-size:11px;">6am</div><div class="ptitle">Wake &#8212; Consistent Time</div></div><div class="pbody"><div class="pmech">The morning sets the neurological tone for the entire day.</div><ul class="pbullets"><li>Immediate: out of bed, no phone for first 30 minutes</li><li>5 minutes outside or bright window &#8212; sunlight for SCN anchoring</li><li>Cold shower ending (2&#8211;3 min cold) &#8212; norepinephrine spike, dopamine tone</li><li>10 min meditation &#8212; PFC + thalamic filtering training</li><li>Write 3 priorities + today's training goal (decision batch + ACC prime)</li><li>Tyrosine-rich breakfast: eggs, meat, seeds, fish</li><li>First caffeine at 60&#8211;90 min post-wake (200mg)</li></ul></div></div>
+    <h2>Pre-Competition Stack</h2>
+    <div class="pcard"><div class="pcard-h"><div class="pnum" style="width:auto;border-radius:8px;padding:4px 12px;font-size:11px;">-90min</div><div class="ptitle">Pre-Performance Protocol</div></div><div class="pbody"><div class="pmech">Prime every relevant system before the moment of performance.</div><ul class="pbullets"><li>90 min out: review preparation notes; reconnect to your 'why' (ACC priming)</li><li>60 min out: caffeine dose (3&#8211;6mg/kg); begin physical warm-up</li><li>30 min out: consistent pre-performance ritual (music, movement, mindset cues); mental rehearsal in first-person</li><li>5 min out: box breathing &#8212; 4&#8211;6 cycles of 4-4-4-4</li><li>Final: one verbal cue word connecting to technical intent, not outcome fear</li><li>Self-talk: 'I've prepared for this. I execute.'</li></ul></div></div>
+    <h2>Recovery Stack</h2>
+    <div class="pcard"><div class="pcard-h"><div class="pnum" style="width:auto;border-radius:8px;padding:4px 12px;font-size:11px;">Post</div><div class="ptitle">Post-Performance Recovery Protocol</div></div><div class="pbody"><div class="pmech">The performance period continues after you stop competing.</div><ul class="pbullets"><li>Immediately: 5 min diaphragmatic breathing (in 4, out 6&#8211;8) &#8212; parasympathetic activation</li><li>Celebrate your effort immediately &#8212; dopamine reinforcement of the training loop</li><li>Protein + carbohydrate within 30 minutes</li><li>That evening: 10 min journaling &#8212; what went well, what to adjust, what you're proud of</li><li>Magnesium glycinate 300&#8211;400mg (60 min before bed)</li><li>No screens 90 min before bed; full sleep cycle for complete consolidation</li></ul></div></div>
+    <h2>Common Mistakes</h2>
+    <div class="pgrid">
+      <div class="pcard" style="border-left:4px solid #FF453A;">
+        <div class="pcard-h" style="background:#FFF5F5;"><div class="pnum" style="background:#FF453A;">!</div><div class="ptitle">Overtraining</div></div>
+        <div class="pbody"><p>High physical volume + high cognitive demands simultaneously deplete PFC, ACC, and brain stem resources. Build recovery weeks into every training block. Watch HRV trends. Recovery is when adaptation happens &#8212; not during training.</p></div>
+      </div>
+      <div class="pcard" style="border-left:4px solid #FF453A;">
+        <div class="pcard-h" style="background:#FFF5F5;"><div class="pnum" style="background:#FF453A;">!</div><div class="ptitle">Sleep Debt</div></div>
+        <div class="pbody"><p>There is no hack around it. Caffeine masks symptoms but doesn't restore function. Consistently sleeping under 7 hours: fix this first. Everything else is cosmetic until you do.</p></div>
+      </div>
+      <div class="pcard" style="border-left:4px solid #FF453A;">
+        <div class="pcard-h" style="background:#FFF5F5;"><div class="pnum" style="background:#FF453A;">!</div><div class="ptitle">Cheap Dopamine</div></div>
+        <div class="pbody"><p>Social media, pornography, and sugar before training blunt the dopamine drive that makes training feel rewarding. Dopamine hygiene is non-optional for anyone serious about sustained motivation.</p></div>
+      </div>
+      <div class="pcard" style="border-left:4px solid #FF453A;">
+        <div class="pcard-h" style="background:#FFF5F5;"><div class="pnum" style="background:#FF453A;">!</div><div class="ptitle">Skipping Fundamentals</div></div>
+        <div class="pbody"><p>Advanced protocols are multipliers. They multiply what's already there. If sleep, exercise, and consistent practice aren't in place &#8212; there's nothing to multiply. Build the foundation first.</p></div>
+      </div>
+    </div>
+    <div class="ch-sum">
+      <span class="slbl">The Blueprint</span>
+      <div class="stitle">Nine regions. Forty-five protocols. One integrated system.</div>
+      <p style="color:rgba(255,255,255,.7);font-size:15px;line-height:1.7;margin-bottom:0;">Start with the non-negotiables: nail sleep and exercise. Then add one protocol from your most limiting brain region. Run it for 30 days before adding another. Build the architecture deliberately, one layer at a time.</p>
+      <div class="ch-insight">"Apply them. The performance is waiting."</div>
+      <p style="margin-top:20px;font-family:'Space Grotesk',sans-serif;font-size:15px;color:#fff;border-top:1px solid rgba(255,255,255,.15);padding-top:16px;margin-bottom:0;"><strong style="color:var(--accent);">KEY TAKEAWAY:</strong> Don't try to implement 45 protocols. Start with 7-9 hours of sleep and 3 hours of weekly Zone 2 cardio. Once those are locked, identify your single biggest performance bottleneck from the 9 regions and add one protocol. Stack deliberately. Gains compound.</p>
+    </div>
+  </div>
+</div>
+
+<!-- QUICK REFERENCE -->
+<div class="qr-sec" id="qr">
+  <div class="pw">
+    <div style="text-align:center;margin-bottom:60px;">
+      <span class="slabel">Back Matter</span>
+      <h2 style="font-size:40px;color:var(--navy);">Quick Reference Cards</h2>
+      <p style="color:var(--muted);margin-top:12px;">All 9 regions &middot; 45 protocols &middot; Instant access</p>
+    </div>
+<div class="qr-card">
+      <div class="qr-ch"><div class="qr-rn">01</div><div class="qr-ct"><h3>Prefrontal Cortex &#8212; Willpower Engine</h3><p>Executive control &middot; decisions &middot; discipline</p></div></div>
+      <div><div class="qr-row"><div class="qrn">1</div><div class="qrname">Cold Exposure</div><p class="qract">2&#8211;3 min cold shower daily; norepinephrine + willpower reps</p></div><div class="qr-row"><div class="qrn">2</div><div class="qrname">Meditation</div><p class="qract">10 min focused attention; gray matter growth</p></div><div class="qr-row"><div class="qrn">3</div><div class="qrname">Decision Batching</div><p class="qract">Weekly plan + 3 daily priorities; preserve PFC capacity</p></div><div class="qr-row"><div class="qrn">4</div><div class="qrname">Sleep Optimization</div><p class="qract">7&#8211;9h, consistent schedule, 65&#176;F room</p></div><div class="qr-row"><div class="qrn">5</div><div class="qrname">Progressive Discipline</div><p class="qract">Daily small discomfort challenge; escalate monthly</p></div></div>
+    </div><div class="qr-card">
+      <div class="qr-ch"><div class="qr-rn">02</div><div class="qr-ct"><h3>Anterior Cingulate Cortex &#8212; Grit Circuit</h3><p>Effort tolerance &middot; pain threshold &middot; persistence</p></div></div>
+      <div><div class="qr-row"><div class="qrn">1</div><div class="qrname">HIIT</div><p class="qract">2x/week; 4&#8211;6 x 30-sec max effort; stay with the discomfort</p></div><div class="qr-row"><div class="qrn">2</div><div class="qrname">Mindfulness</div><p class="qract">10&#8211;20 min open monitoring; observe discomfort without obeying</p></div><div class="qr-row"><div class="qrn">3</div><div class="qrname">Goal Rituals</div><p class="qract">Daily purpose statement before training; pre-competition ritual</p></div><div class="qr-row"><div class="qrn">4</div><div class="qrname">Caffeine Optimization</div><p class="qract">200&#8211;400mg; 30&#8211;60 min pre-performance; cycle regularly</p></div><div class="qr-row"><div class="qrn">5</div><div class="qrname">Iron Monitoring</div><p class="qract">Ferritin test 2x/year; target 50&#8211;100+ ng/mL</p></div></div>
+    </div><div class="qr-card">
+      <div class="qr-ch"><div class="qr-rn">03</div><div class="qr-ct"><h3>Basal Ganglia &#8212; Habit Automation</h3><p>Automated behavior &middot; dopamine loops &middot; routine execution</p></div></div>
+      <div><div class="qr-row"><div class="qrn">1</div><div class="qrname">Habit Stacking</div><p class="qract">"After X, I will Y" anchoring to existing behaviors</p></div><div class="qr-row"><div class="qrn">2</div><div class="qrname">Reward Timing</div><p class="qract">Celebrate immediately after each behavior rep</p></div><div class="qr-row"><div class="qrn">3</div><div class="qrname">Dopamine Hygiene</div><p class="qract">No cheap dopamine before training; protect baseline</p></div><div class="qr-row"><div class="qrn">4</div><div class="qrname">Schedule Consistency</div><p class="qract">Same time, place, pre-training ritual every session</p></div><div class="qr-row"><div class="qrn">5</div><div class="qrname">Tyrosine Diet</div><p class="qract">Eggs, meat, seeds in pre-training meal; B vitamins as cofactors</p></div></div>
+    </div><div class="qr-card">
+      <div class="qr-ch"><div class="qr-rn">04</div><div class="qr-ct"><h3>Hippocampus &#8212; Learning Accelerator</h3><p>Memory formation &middot; neurogenesis &middot; learning retention</p></div></div>
+      <div><div class="qr-row"><div class="qrn">1</div><div class="qrname">Zone 2 Cardio</div><p class="qract">3&#8211;4x/week; 30&#8211;60 min; 60&#8211;70% max HR for BDNF</p></div><div class="qr-row"><div class="qrn">2</div><div class="qrname">REM Sleep</div><p class="qract">7&#8211;9h; no alcohol; protect final sleep cycles</p></div><div class="qr-row"><div class="qrn">3</div><div class="qrname">Omega-3/DHA</div><p class="qract">1&#8211;3g EPA+DHA daily; fish or algae-based supplement</p></div><div class="qr-row"><div class="qrn">4</div><div class="qrname">Novel Skill Learning</div><p class="qract">One genuinely new skill per quarter</p></div><div class="qr-row"><div class="qrn">5</div><div class="qrname">Alcohol Awareness</div><p class="qract">No alcohol night before key learning sessions</p></div></div>
+    </div><div class="qr-card">
+      <div class="qr-ch"><div class="qr-rn">05</div><div class="qr-ct"><h3>Temporal Lobe &#8212; Coaching Receiver</h3><p>Language processing &middot; coaching uptake &middot; skill storage</p></div></div>
+      <div><div class="qr-row"><div class="qrn">1</div><div class="qrname">Active Listening</div><p class="qract">Paraphrase coaching; write key points within 5 min post-session</p></div><div class="qr-row"><div class="qrn">2</div><div class="qrname">Music &amp; Rhythm</div><p class="qract">BPM-matched training; rhythm drills; metronome work</p></div><div class="qr-row"><div class="qrn">3</div><div class="qrname">Verbal Rehearsal</div><p class="qract">1&#8211;2 technical cue words per key skill; use during practice</p></div><div class="qr-row"><div class="qrn">4</div><div class="qrname">Audio Priming</div><p class="qract">1&#8211;2 hrs/week domain-specific podcasts; write key takeaway</p></div><div class="qr-row"><div class="qrn">5</div><div class="qrname">Social Interaction</div><p class="qract">2&#8211;3 high-quality in-person engagements per week</p></div></div>
+    </div><div class="qr-card">
+      <div class="qr-ch"><div class="qr-rn">06</div><div class="qr-ct"><h3>Cerebellum &#8212; Precision Engine</h3><p>Motor precision &middot; muscle memory &middot; movement refinement</p></div></div>
+      <div><div class="qr-row"><div class="qrn">1</div><div class="qrname">Deliberate Practice</div><p class="qract">20&#8211;30 min high-focus with feedback; 70&#8211;80% accuracy target</p></div><div class="qr-row"><div class="qrn">2</div><div class="qrname">Proprioception</div><p class="qract">Daily balance work; BOSU; agility ladder; 5&#8211;10 min warm-up</p></div><div class="qr-row"><div class="qrn">3</div><div class="qrname">Visualization</div><p class="qract">5&#8211;10 min first-person mental rehearsal; before practice or sleep</p></div><div class="qr-row"><div class="qrn">4</div><div class="qrname">Cross-Training</div><p class="qract">Weekly different movement modality; annual cross-training block</p></div><div class="qr-row"><div class="qrn">5</div><div class="qrname">Rest for Consolidation</div><p class="qract">Sleep after technical practice; don't stack without recovery</p></div></div>
+    </div><div class="qr-card">
+      <div class="qr-ch"><div class="qr-rn">07</div><div class="qr-ct"><h3>Amygdala &#8212; Threat Processor</h3><p>Stress response &middot; pressure performance &middot; fear regulation</p></div></div>
+      <div><div class="qr-row"><div class="qrn">1</div><div class="qrname">Box Breathing</div><p class="qract">4-4-4-4; 4&#8211;6 cycles pre-performance; daily for vagal tone</p></div><div class="qr-row"><div class="qrn">2</div><div class="qrname">Stress Exposure</div><p class="qract">Graduated competition simulation; escalate stakes progressively</p></div><div class="qr-row"><div class="qrn">3</div><div class="qrname">HRV Management</div><p class="qract">Track daily; recover when 10%+ below 7-day rolling average</p></div><div class="qr-row"><div class="qrn">4</div><div class="qrname">Journaling</div><p class="qract">10 min pre/post competition; name fears, then write capability</p></div><div class="qr-row"><div class="qrn">5</div><div class="qrname">Cold/Heat Contrast</div><p class="qract">Cold immersion + sauna; 3&#8211;4x/week; stay present in discomfort</p></div></div>
+    </div><div class="qr-card">
+      <div class="qr-ch"><div class="qr-rn">08</div><div class="qr-ct"><h3>Brain Stem &#8212; Foundation</h3><p>Autonomic regulation &middot; HRV &middot; breathing baseline</p></div></div>
+      <div><div class="qr-row"><div class="qrn">1</div><div class="qrname">Nasal Breathing</div><p class="qract">Nasal-only during Zone 1&#8211;2; mouth tape for sleep if needed</p></div><div class="qr-row"><div class="qrn">2</div><div class="qrname">Neck Mobility</div><p class="qract">Daily 5-min neck circuit + suboccipital release</p></div><div class="qr-row"><div class="qrn">3</div><div class="qrname">Sleep Schedule</div><p class="qract">Same wake time &#177;30 min, 7 days/week; light anchoring protocol</p></div><div class="qr-row"><div class="qrn">4</div><div class="qrname">Magnesium Glycinate</div><p class="qract">300&#8211;400mg; 60 min before bed; avoid oxide form</p></div><div class="qr-row"><div class="qrn">5</div><div class="qrname">Diaphragmatic Breathing</div><p class="qract">5 min extended exhale (in 4, out 6&#8211;8); post-training + pre-sleep</p></div></div>
+    </div><div class="qr-card">
+      <div class="qr-ch"><div class="qr-rn">09</div><div class="qr-ct"><h3>Thalamus &#8212; Attention Architect</h3><p>Sensory filtering &middot; attention gating &middot; sleep spindles</p></div></div>
+      <div><div class="qr-row"><div class="qrn">1</div><div class="qrname">Sleep Quality</div><p class="qract">Cool room; no alcohol; no screens 90 min before bed</p></div><div class="qr-row"><div class="qrn">2</div><div class="qrname">Sensory Training</div><p class="qract">Reaction ball; visual tracking; eyes-closed movement drills</p></div><div class="qr-row"><div class="qrn">3</div><div class="qrname">Caffeine Timing</div><p class="qract">Delay first dose 60&#8211;90 min post-wake; last dose by 1pm</p></div><div class="qr-row"><div class="qrn">4</div><div class="qrname">Mindfulness</div><p class="qract">Focused attention in mild distraction; attentional breathing</p></div><div class="qr-row"><div class="qrn">5</div><div class="qrname">Environmental Design</div><p class="qract">Clear workspace; DND mode; single-tab focus; pre-session quiet</p></div></div>
+    </div></div></div>
+<!-- RECOMMENDED READING -->
+<div class="reading-sec" id="reading">
+  <div class="pw">
+    <div style="margin-bottom:48px;">
+      <span class="slabel">Back Matter</span>
+      <h2 style="font-size:36px;color:var(--navy);">Recommended Reading</h2>
+      <p style="color:var(--muted);margin-top:8px;">Go deeper with the science. Some book links are Amazon affiliate links &#8212; we earn a small commission at no cost to you.</p>
+    </div>
+    <div class="reading-grid">
+      <a class="rcard" href="https://www.amazon.com/dp/1501144324?tag=psyked20-20" target="_blank">
+        <div class="rcard-num">01</div><div class="rcard-title">Why We Sleep</div><div class="rcard-auth">Matthew Walker</div>
+        <p class="rcard-desc">The definitive guide to sleep science &#8212; PFC sensitivity, REM consolidation, every brain region covered.</p>
+      </a>
+      <a class="rcard" href="https://www.amazon.com/dp/0143113100?tag=psyked20-20" target="_blank">
+        <div class="rcard-num">02</div><div class="rcard-title">The Brain That Changes Itself</div><div class="rcard-auth">Norman Doidge</div>
+        <p class="rcard-desc">Neuroplasticity in depth &#8212; why the brain remains trainable at any age.</p>
+      </a>
+      <a class="rcard" href="https://www.amazon.com/dp/0316113514?tag=psyked20-20" target="_blank">
+        <div class="rcard-num">03</div><div class="rcard-title">Spark</div><div class="rcard-auth">John Ratey</div>
+        <p class="rcard-desc">The revolutionary science of exercise and the brain &#8212; BDNF, hippocampus, learning, and mood.</p>
+      </a>
+      <a class="rcard" href="https://www.amazon.com/dp/0735211299?tag=psyked20-20" target="_blank">
+        <div class="rcard-num">04</div><div class="rcard-title">Atomic Habits</div><div class="rcard-auth">James Clear</div>
+        <p class="rcard-desc">Basal ganglia, cue-routine-reward loops, identity-based habit formation. Practical and research-backed.</p>
+      </a>
+      <a class="rcard" href="https://www.amazon.com/dp/0735213615?tag=psyked20-20" target="_blank">
+        <div class="rcard-num">05</div><div class="rcard-title">Breath</div><div class="rcard-auth">James Nestor</div>
+        <p class="rcard-desc">Nasal breathing, autonomic nervous system, CO2 tolerance &#8212; how we breathe and why it matters.</p>
+      </a>
+      <a class="rcard" href="https://www.amazon.com/dp/0544947223?tag=psyked20-20" target="_blank">
+        <div class="rcard-num">06</div><div class="rcard-title">Peak</div><div class="rcard-auth">Anders Ericsson</div>
+        <p class="rcard-desc">The real science of expertise &#8212; deliberate practice, cerebellar motor learning, how champions are made.</p>
+      </a>
+      <a class="rcard" href="https://www.amazon.com/dp/1583335080?tag=psyked20-20" target="_blank">
+        <div class="rcard-num">07</div><div class="rcard-title">The Willpower Instinct</div><div class="rcard-auth">Kelly McGonigal</div>
+        <p class="rcard-desc">PFC science, self-regulation, ego depletion, and practical willpower tools from Stanford.</p>
+      </a>
+      <a class="rcard" href="https://www.amazon.com/dp/0345472322?tag=psyked20-20" target="_blank">
+        <div class="rcard-num">08</div><div class="rcard-title">Mindset</div><div class="rcard-auth">Carol Dweck</div>
+        <p class="rcard-desc">Growth mindset, effort-belief, neuroplasticity &#8212; the psychology of developing ability over time.</p>
+      </a>
+      <a class="rcard" href="https://www.amazon.com/dp/1544512287?tag=psyked20-20" target="_blank">
+        <div class="rcard-num">09</div><div class="rcard-title">Can't Hurt Me</div><div class="rcard-auth">David Goggins</div>
+        <p class="rcard-desc">The 40% rule in practice. ACC training through radical discomfort exposure. Raw, real, research-validated.</p>
+      </a>
+      <a class="rcard" href="https://www.hubermanlab.com" target="_blank">
+        <div class="rcard-num">10</div><div class="rcard-title">Huberman Lab Podcast</div><div class="rcard-auth">Andrew Huberman</div>
+        <p class="rcard-desc">Every neuroscience protocol in this book has been covered in depth. Free. Essential. Start with episodes on focus, sleep, and exercise.</p>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT PSYKED -->
+<div style="background:var(--light);padding:80px 0;" id="about">
+  <div class="pw" style="max-width:680px;">
+    <div style="text-align:center;margin-bottom:48px;">
+      <span class="slabel">About</span>
+      <h2 style="font-size:36px;color:var(--navy);">Psyked</h2>
+      <p style="color:var(--muted);font-size:18px;margin-top:12px;">The Interactive Brain Performance Platform</p>
+    </div>
+    <div style="background:var(--white);border-radius:16px;padding:48px;border:1px solid var(--border);text-align:center;">
+      <p style="font-size:17px;line-height:1.75;margin-bottom:24px;">Psyked brings the neuroscience of performance to life through an interactive 3D brain model that lets you explore every region, understand its function, and connect it directly to your training.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:32px 0;text-align:left;">
+        <div style="background:var(--light);border-radius:10px;padding:20px;">
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:var(--accent-dark);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;">Free Features</div>
+          <ul style="list-style:none;padding:0;margin:0;">
+            <li style="font-size:14px;color:var(--mid);padding:6px 0;border-bottom:1px solid var(--border);">Interactive 3D brain model</li>
+            <li style="font-size:14px;color:var(--mid);padding:6px 0;border-bottom:1px solid var(--border);">Performance protocol library</li>
+            <li style="font-size:14px;color:var(--mid);padding:6px 0;border-bottom:1px solid var(--border);">Region-specific training guides</li>
+            <li style="font-size:14px;color:var(--mid);padding:6px 0;">Weekly performance content</li>
+          </ul>
+        </div>
+        <div style="background:var(--navy);border-radius:10px;padding:20px;">
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;">Our Mission</div>
+          <p style="font-size:14px;color:rgba(255,255,255,.7);line-height:1.6;margin:0;">Close the gap between neuroscience research and athletic performance practice. Make the best science accessible, visual, and immediately applicable.</p>
+        </div>
+      </div>
+      <a href="https://psyked.app" style="display:inline-block;background:var(--accent);color:var(--navy);font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16px;padding:16px 40px;border-radius:100px;text-decoration:none;letter-spacing:.02em;">Explore psyked.app &#8212; Free</a>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-sec">
+  <div class="pw">
+    <h2>What's Your Brain Performance Profile?</h2>
+    <p class="cta-desc">You've read the science. Now find your personal bottleneck &#8212; and your biggest opportunity.</p>
+    <a href="https://psyked.netlify.app/quiz.html" class="cta-btn">Take the Brain Performance Profile Quiz &#8212; $17</a>
+    <div style="margin-top:24px;margin-bottom:8px;">
+      <a href="https://psyked.netlify.app" style="display:inline-block;background:transparent;color:var(--accent);font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;padding:14px 32px;border-radius:100px;text-decoration:none;letter-spacing:.02em;border:1.5px solid rgba(0,212,255,.4);">Explore the Interactive 3D Brain &#8212; psyked.netlify.app &#8594;</a>
+    </div>
+    <div class="cta-social">
+      <p style="margin-bottom:10px;font-size:14px;color:rgba(255,255,255,.5);">&#128279; Loved this book? Share it &#8212; every athlete you send it to gets the same edge you now have.</p>
+      <p style="margin-bottom:8px;">Follow Psyked: @psykedapp on Instagram, Twitter/X, and YouTube</p>
+      <p>Join the newsletter: psyked.app/newsletter &#8212; weekly brain performance insights</p>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div style="background:var(--navy);padding:32px 0;text-align:center;">
+  <p style="font-family:'Space Grotesk',sans-serif;font-size:13px;color:rgba(255,255,255,.3);margin:0;">Brain Performance Blueprint &#8212; &#169; 2026 Psyked &#8212; <a href="https://psyked.app" style="color:var(--accent);text-decoration:none;">psyked.app</a></p>
+  <p style="font-family:'Space Grotesk',sans-serif;font-size:12px;color:rgba(255,255,255,.2);margin-top:6px;">9 Brain Regions. 45 Protocols. Unlimited Performance.</p>
+</div>
+
+
+</body>
+</html>

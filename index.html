@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>PSYKED — Know your brain. Own your performance.</title>
+  <meta name="description" content="Interactive 3D brain model. Click a region. Get practical protocols to optimize your mental and physical performance." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ═══ HEADER ═══ -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-text">PSYKED</span>
+        <span class="logo-dot">.</span>
+      </div>
+      <p class="tagline">Know your brain. Own your performance.</p>
+      <nav class="header-nav">
+        <a href="#brain-viewer" class="nav-link">Explore</a>
+        <a href="https://latterligfett.gumroad.com/l/lqyis" class="nav-link nav-cta" target="_blank" rel="noopener">Get the Guide</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ═══ HERO ═══ -->
+  <section class="hero" id="brain-viewer">
+    <div class="hero-bg-grid"></div>
+
+    <!-- Hint overlay -->
+    <div class="brain-hint" id="brainHint">
+      <div class="hint-icon">🧠</div>
+      <p>Click a region to select it — click again to explore its protocols</p>
+    </div>
+
+    <!-- Loading state -->
+    <div class="loader" id="loader">
+      <div class="loader-ring"></div>
+      <p class="loader-text">Loading brain model…</p>
+    </div>
+
+    <!-- Three.js canvas -->
+    <canvas id="brainCanvas"></canvas>
+
+    <!-- Hover label -->
+    <div class="hover-label" id="hoverLabel"></div>
+
+    <!-- Viewer toolbar (right side) -->
+    <div class="viewer-toolbar" id="viewerToolbar">
+      <button class="toolbar-btn active" id="btnAxes" title="Toggle orientation axes">
+        <span class="toolbar-icon">⊹</span>
+        <span class="toolbar-label">Axes</span>
+      </button>
+      <button class="toolbar-btn active" id="btnLabels" title="Toggle region labels">
+        <span class="toolbar-icon">🏷</span>
+        <span class="toolbar-label">Labels</span>
+      </button>
+    </div>
+
+  </section>
+
+  <!-- ═══ SIDE PANEL ═══ -->
+  <aside class="side-panel" id="sidePanel" aria-hidden="true">
+    <button class="panel-close" id="panelClose" aria-label="Close panel">✕</button>
+
+    <div class="panel-content" id="panelContent">
+      <!-- Filled dynamically by app.js -->
+    </div>
+
+    <div class="panel-footer">
+      <a href="https://latterligfett.gumroad.com/l/lqyis" class="btn-secondary" id="panelCTA" target="_blank" rel="noopener">Get the full protocol guide →</a>
+    </div>
+  </aside>
+
+  <!-- Panel overlay (mobile) -->
+  <div class="panel-overlay" id="panelOverlay"></div>
+
+  <!-- ═══ REGION GRID (below fold) ═══ -->
+  <section class="regions-section">
+    <div class="container">
+      <h2 class="section-title">9 Regions. Unlimited Performance.</h2>
+      <p class="section-sub">Click the brain above — or explore each region below.</p>
+      <div class="regions-grid" id="regionsGrid">
+        <!-- Filled by app.js -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ EMAIL CAPTURE ═══ -->
+  <section class="email-section" id="email-capture">
+    <div class="container">
+      <div class="email-card">
+        <div class="email-glow"></div>
+        <div class="email-icon">⚡</div>
+        <h2 class="email-title">Get the full protocol guide</h2>
+        <p class="email-sub">
+          7 brain regions. 35 protocols. Actionable science you can use today.
+          Free — delivered straight to your inbox.
+        </p>
+        <form
+          class="email-form"
+          name="psyked-waitlist"
+          method="POST"
+          data-netlify="true"
+          netlify-honeypot="bot-field"
+          id="emailForm"
+        >
+          <input type="hidden" name="form-name" value="psyked-waitlist" />
+          <p style="display:none"><label>Don't fill this: <input name="bot-field" /></label></p>
+          <div class="form-row">
+            <input
+              type="email"
+              name="email"
+              placeholder="your@email.com"
+              class="email-input"
+              required
+              autocomplete="email"
+            />
+            <button type="submit" class="btn-primary">Get the Guide</button>
+          </div>
+          <p class="form-note">No spam. Unsubscribe anytime.</p>
+        </form>
+        <div class="form-success" id="formSuccess" style="display:none">
+          <span class="success-icon">✅</span>
+          <p>You're in! Check your inbox for the guide.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ CLICK LOGGER (dev) ═══ -->
+  <div id="clickLogger" class="click-logger" style="display:none">
+    <div class="click-logger-header">
+      <span>📊 Click Log (<span id="clickCount">0</span>)</span>
+      <div class="click-logger-actions">
+        <button id="clickLoggerMinimize">▼</button>
+        <button id="clickLoggerClear">Clear</button>
+        <button id="clickLoggerClose">✕</button>
+      </div>
+    </div>
+    <div class="click-logger-body" id="clickLogBody">
+      <div class="click-logger-empty">Click anywhere in the app...</div>
+    </div>
+  </div>
+  <button id="clickLoggerToggle" class="click-logger-toggle">📊</button>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-logo">
+        PSYKED<span class="logo-dot">.</span>
+      </div>
+      <p class="footer-copy">© 2026 Psyked. Built on neuroscience. Designed for performance.</p>
+    </div>
+  </footer>
+
+  <!-- Three.js + loaders (CDN) -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.162.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.162.0/examples/jsm/"
+    }
+  }
+  </script>
+
+  <script type="module" src="app.js?v=14"></script>
+
+  <!-- Click Logger (vanilla JS — no module deps) -->
+  <script>
+    (function() {
+      const log = [];
+      let count = 0;
+      let minimized = false;
+      let closed = false;
+
+      const logger = document.getElementById('clickLogger');
+      const toggle = document.getElementById('clickLoggerToggle');
+      const body = document.getElementById('clickLogBody');
+      const countEl = document.getElementById('clickCount');
+      const minimizeBtn = document.getElementById('clickLoggerMinimize');
+      const clearBtn = document.getElementById('clickLoggerClear');
+      const closeBtn = document.getElementById('clickLoggerClose');
+
+      // Always show toggle button
+      toggle.style.display = 'flex';
+      toggle.style.alignItems = 'center';
+      toggle.style.justifyContent = 'center';
+
+      function getElementInfo(el) {
+        const tag = el.tagName ? el.tagName.toLowerCase() : '?';
+        const id = el.id ? '#' + el.id : '';
+        const classes = el.className && typeof el.className === 'string'
+          ? '.' + el.className.trim().split(/\s+/).filter(Boolean).join('.')
+          : '';
+        const text = el.textContent ? el.textContent.slice(0, 40).trim().replace(/\s+/g, ' ') : '';
+        const dataAction = el.dataset?.action || '';
+        return [tag, id, classes, dataAction, text ? `"${text}"` : ''].filter(Boolean).join(' ');
+      }
+
+      function formatTime() {
+        const d = new Date();
+        return d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      }
+
+      function render() {
+        countEl.textContent = count;
+
+        if (log.length === 0) {
+          body.innerHTML = '<div class="click-logger-empty">Click anywhere in the app...</div>';
+        } else {
+          body.innerHTML = log.slice(0, 20).map(e => `
+            <div class="click-log-entry">
+              <div class="click-log-entry-element">${e.element}</div>
+              <div class="click-log-entry-meta">${e.time} · x:${e.x} y:${e.y}</div>
+            </div>
+          `).join('');
+        }
+
+        logger.style.display = (closed || minimized) ? 'none' : 'flex';
+        toggle.style.display = closed ? 'flex' : 'none';
+      }
+
+      function addLogEntry(e) {
+        const target = e.target;
+        const elementInfo = getElementInfo(target);
+
+        // Skip if clicking on the logger itself
+        if (logger.contains(target)) return;
+
+        log.unshift({
+          id: count++,
+          element: elementInfo,
+          x: e.clientX,
+          y: e.clientY,
+          time: formatTime(),
+        });
+
+        if (log.length > 50) log.length = 50;
+        render();
+      }
+
+      document.addEventListener('click', addLogEntry);
+
+      minimizeBtn.addEventListener('click', () => { minimized = true; render(); });
+      clearBtn.addEventListener('click', () => { log.length = 0; count = 0; render(); });
+      closeBtn.addEventListener('click', () => { closed = true; render(); });
+      toggle.addEventListener('click', () => { closed = false; minimized = false; render(); });
+
+      render();
+    })();
+  </script>
+
+</body>
+</html>

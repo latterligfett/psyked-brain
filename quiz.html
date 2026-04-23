@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Brain Performance Quiz — Psyked</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../style.css"/>
+  <style>
+    .quiz-page{min-height:100vh;display:flex;flex-direction:column;background:var(--bg-base)}
+    .quiz-nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:56px;background:rgba(4,7,15,.9);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+    .back-link{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:var(--text-secondary);text-decoration:none;transition:color var(--transition)}
+    .back-link:hover{color:var(--accent);text-decoration:none}
+    .back-link svg{width:16px;height:16px}
+    .nav-brand{font-family:var(--font-display);font-size:15px;font-weight:700;color:var(--accent);letter-spacing:.08em}
+    .quiz-main{flex:1;display:flex;flex-direction:column;align-items:center;padding:44px 16px 80px}
+    .progress-wrap{width:100%;max-width:640px;margin-bottom:40px}
+    .progress-meta{display:flex;justify-content:space-between;margin-bottom:10px}
+    .progress-label{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted)}
+    .progress-count{font-family:var(--font-display);font-size:13px;font-weight:700;color:var(--accent)}
+    .progress-track{height:3px;background:rgba(0,212,255,.1);border-radius:99px;overflow:hidden}
+    .progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),#7B2FFF);border-radius:99px;transition:width .55s cubic-bezier(.4,0,.2,1);box-shadow:0 0 10px rgba(0,212,255,.35)}
+    #intro-screen{width:100%;max-width:640px;text-align:center}
+    .intro-badge{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);padding:5px 14px;border-radius:99px;margin-bottom:28px}
+    .intro-title{font-family:var(--font-display);font-size:clamp(28px,6vw,50px);font-weight:700;line-height:1.12;background:linear-gradient(135deg,#F0F4FF 30%,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:20px}
+    .intro-sub{font-size:17px;color:var(--text-secondary);line-height:1.7;margin-bottom:40px;max-width:500px;margin-left:auto;margin-right:auto}
+    .intro-stats{display:flex;justify-content:center;gap:36px;margin-bottom:44px;flex-wrap:wrap}
+    .stat-num{display:block;font-family:var(--font-display);font-size:30px;font-weight:700;color:var(--accent)}
+    .stat-label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted)}
+    .btn-start{display:inline-flex;align-items:center;gap:10px;padding:16px 44px;background:var(--accent);color:#04070F;font-family:var(--font-display);font-size:15px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;border:none;border-radius:var(--radius-md);cursor:pointer;transition:all .2s ease}
+    .btn-start:hover{background:#fff;transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,212,255,.35)}
+    .question-card{width:100%;max-width:640px;opacity:0;transform:translateY(18px);transition:opacity .35s ease,transform .35s ease;display:none}
+    .question-card.visible{display:block;opacity:1;transform:translateY(0)}
+    .question-card.exit{opacity:0;transform:translateY(-18px)}
+    .q-tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.18);padding:4px 12px;border-radius:99px;margin-bottom:20px}
+    .q-text{font-family:var(--font-display);font-size:clamp(18px,4vw,26px);font-weight:600;line-height:1.35;color:var(--text-primary);margin-bottom:32px}
+    .answers{display:flex;flex-direction:column;gap:11px}
+    .answer-card{display:flex;align-items:flex-start;gap:16px;padding:17px 20px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);cursor:pointer;transition:all .2s ease}
+    .answer-card:hover{border-color:var(--border-hover);background:var(--bg-panel);transform:translateX(4px)}
+    .answer-card.selected{border-color:var(--accent);background:rgba(0,212,255,.06);box-shadow:0 0 0 1px var(--accent),0 0 22px rgba(0,212,255,.1)}
+    .answer-letter{flex-shrink:0;width:28px;height:28px;border-radius:8px;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;margin-top:1px;font-family:var(--font-display);font-size:11px;font-weight:700;color:var(--text-muted);transition:all .2s ease}
+    .answer-card:hover .answer-letter{border-color:var(--accent);color:var(--accent);background:rgba(0,212,255,.1)}
+    .answer-card.selected .answer-letter{background:var(--accent);border-color:var(--accent);color:#04070F}
+    .answer-text{font-size:15px;color:var(--text-secondary);line-height:1.5;transition:color .2s}
+    .answer-card:hover .answer-text,.answer-card.selected .answer-text{color:var(--text-primary)}
+    #results-screen{display:none;width:100%;max-width:720px}
+    #results-screen.visible{display:block;animation:fadeUp .5s ease forwards}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+    .results-header{text-align:center;margin-bottom:48px}
+    .results-badge{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#00FFA3;background:rgba(0,255,163,.07);border:1px solid rgba(0,255,163,.2);padding:5px 14px;border-radius:99px;margin-bottom:20px}
+    .results-title{font-family:var(--font-display);font-size:clamp(22px,5vw,40px);font-weight:700;line-height:1.18;background:linear-gradient(135deg,#F0F4FF 30%,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:12px}
+    .results-sub{font-size:15px;color:var(--text-secondary);max-width:480px;margin:0 auto;line-height:1.6}
+    .priority-stack{display:flex;flex-direction:column;gap:16px;margin-bottom:40px}
+    .region-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;position:relative;overflow:hidden}
+    .region-card.r1{border-color:rgba(0,212,255,.35);box-shadow:0 0 40px rgba(0,212,255,.05)}
+    .region-card.r2{border-color:rgba(123,47,255,.25)}
+    .region-card.r3{border-color:rgba(0,212,255,.14)}
+    .rc-glow{position:absolute;top:-40px;right:-40px;width:180px;height:180px;border-radius:50%;filter:blur(70px);pointer-events:none}
+    .r1 .rc-glow{background:rgba(0,212,255,.06)}.r2 .rc-glow{background:rgba(123,47,255,.05)}.r3 .rc-glow{background:rgba(0,212,255,.03)}
+    .rc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:8px;flex-wrap:wrap}
+    .rc-name-row{display:flex;align-items:center;gap:10px}
+    .rc-rank{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:11px;font-weight:700;flex-shrink:0}
+    .r1 .rc-rank{background:var(--accent);color:#04070F}.r2 .rc-rank{background:#7B2FFF;color:#fff}.r3 .rc-rank{background:rgba(0,212,255,.12);color:var(--accent);border:1px solid rgba(0,212,255,.25)}
+    .rc-name{font-family:var(--font-display);font-size:17px;font-weight:700;color:var(--text-primary)}
+    .rc-abbr{font-size:12px;font-weight:600;color:var(--text-muted);letter-spacing:.07em}
+    .rc-score{font-family:var(--font-display);font-size:12px;font-weight:700;padding:4px 12px;border-radius:99px}
+    .r1 .rc-score{background:rgba(0,212,255,.1);color:var(--accent);border:1px solid rgba(0,212,255,.2)}
+    .r2 .rc-score{background:rgba(123,47,255,.1);color:#A87BFF;border:1px solid rgba(123,47,255,.2)}
+    .r3 .rc-score{background:rgba(255,255,255,.05);color:var(--text-secondary);border:1px solid var(--border)}
+    .rc-bar-track{height:5px;background:rgba(255,255,255,.05);border-radius:99px;margin-bottom:20px;overflow:hidden}
+    .rc-bar-fill{height:100%;border-radius:99px;width:0;transition:width 1.3s cubic-bezier(.4,0,.2,1)}
+    .r1 .rc-bar-fill{background:linear-gradient(90deg,var(--accent),rgba(0,212,255,.6));box-shadow:0 0 8px rgba(0,212,255,.4)}
+    .r2 .rc-bar-fill{background:linear-gradient(90deg,#7B2FFF,rgba(123,47,255,.6))}
+    .r3 .rc-bar-fill{background:linear-gradient(90deg,rgba(0,212,255,.5),rgba(0,212,255,.25))}
+    .rc-insight{font-size:14px;color:var(--text-secondary);line-height:1.65;border-top:1px solid var(--border);padding-top:16px}
+    .protocol-teaser{background:var(--bg-panel);border:1px solid rgba(0,212,255,.18);border-radius:var(--radius-lg);padding:28px;margin-bottom:32px;position:relative;overflow:hidden}
+    .pt-stripe{position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent)}
+    .pt-label{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+    .pt-divider{flex:1;height:1px;background:var(--border);display:inline-block}
+    .pt-title{font-family:var(--font-display);font-size:17px;font-weight:700;color:var(--text-primary);margin-bottom:8px}
+    .pt-desc{font-size:14px;color:var(--text-secondary);line-height:1.65}
+    .pt-locked{display:flex;align-items:flex-start;gap:10px;margin-top:20px;padding:13px 16px;background:rgba(0,212,255,.04);border:1px dashed rgba(0,212,255,.18);border-radius:var(--radius-sm)}
+    .pt-locked svg{width:14px;height:14px;color:var(--text-muted);flex-shrink:0;margin-top:2px}
+    .pt-locked span{font-size:13px;color:var(--text-muted);line-height:1.5}
+    .pt-locked strong{color:var(--text-secondary)}
+    .gated-block{background:linear-gradient(135deg,rgba(0,212,255,.04),rgba(123,47,255,.04));border:1px solid rgba(0,212,255,.2);border-radius:var(--radius-lg);padding:44px 32px;text-align:center;margin-bottom:32px}
+    .gated-icon{width:56px;height:56px;background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;margin:0 auto 22px}
+    .gated-icon svg{width:28px;height:28px;color:var(--accent)}
+    .gated-title{font-family:var(--font-display);font-size:clamp(18px,4vw,26px);font-weight:700;color:var(--text-primary);margin-bottom:12px}
+    .gated-desc{font-size:15px;color:var(--text-secondary);line-height:1.6;max-width:460px;margin:0 auto 28px}
+    .gated-features{list-style:none;max-width:380px;margin:0 auto 36px;text-align:left;display:flex;flex-direction:column;gap:10px}
+    .gated-features li{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text-secondary)}
+    .gated-features li svg{width:16px;height:16px;color:var(--accent);flex-shrink:0}
+    .btn-gumroad{display:inline-flex;align-items:center;gap:10px;padding:18px 48px;background:linear-gradient(135deg,var(--accent),#00AACC);color:#04070F;font-family:var(--font-display);font-size:16px;font-weight:700;letter-spacing:.03em;border:none;border-radius:var(--radius-md);cursor:pointer;text-decoration:none;transition:all .25s ease}
+    .btn-gumroad:hover{transform:translateY(-3px);box-shadow:0 14px 44px rgba(0,212,255,.4);color:#04070F;text-decoration:none}
+    .price-badge{display:inline-block;background:rgba(0,0,0,.2);border-radius:6px;padding:2px 8px;font-size:14px}
+    .gated-guarantee{margin-top:14px;font-size:12px;color:var(--text-muted)}
+    .email-section{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:32px;margin-bottom:32px;text-align:center}
+    .es-title{font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--text-primary);margin-bottom:8px}
+    .es-sub{font-size:14px;color:var(--text-secondary);margin-bottom:24px;line-height:1.55}
+    .email-form{display:flex;gap:10px;max-width:480px;margin:0 auto;flex-wrap:wrap}
+    .email-input{flex:1;min-width:200px;padding:13px 16px;background:var(--bg-base);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-primary);font-size:14px;font-family:var(--font-body);transition:border-color .2s}
+    .email-input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,212,255,.1)}
+    .email-input::placeholder{color:var(--text-muted)}
+    .btn-email{padding:13px 24px;background:var(--bg-panel);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-primary);font-size:14px;font-weight:600;font-family:var(--font-body);cursor:pointer;transition:all .2s;white-space:nowrap}
+    .btn-email:hover{border-color:var(--accent);color:var(--accent)}
+    .email-confirm{font-size:13px;color:#00FFA3;margin-top:12px;display:none}
+    @media(max-width:480px){.quiz-main{padding:28px 12px 60px}.gated-block{padding:32px 20px}.btn-gumroad{padding:16px 28px;font-size:15px}}
+    /* ── Brain Stack recommendations ── */
+    .recs-section{margin-bottom:32px}
+    .recs-heading{font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--text-primary);margin-bottom:4px}
+    .recs-subline{font-size:13px;color:var(--text-muted);margin-bottom:18px}
+    .recs-grid{display:flex;flex-direction:column;gap:10px}
+    .rec-card{display:flex;align-items:center;gap:14px;padding:14px 18px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);text-decoration:none;color:inherit;transition:all .2s ease}
+    .rec-card:hover{border-color:var(--accent);background:var(--bg-panel);transform:translateX(3px);text-decoration:none}
+    .rec-icon{font-size:20px;flex-shrink:0;width:28px;text-align:center}
+    .rec-body{flex:1;min-width:0}
+    .rec-name{display:block;font-family:var(--font-display);font-size:14px;font-weight:700;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .rec-author{display:block;font-size:11px;color:var(--text-muted);margin-bottom:2px}
+    .rec-why{display:block;font-size:12px;color:var(--text-secondary);line-height:1.4}
+    .rec-arrow{color:var(--text-muted);font-size:15px;flex-shrink:0;transition:transform .2s}
+    .rec-card:hover .rec-arrow{transform:translateX(4px);color:var(--accent)}
+    .recs-disclosure{font-size:11px;color:var(--text-muted);margin-top:10px;font-style:italic}
+  </style>
+</head>
+<body>
+<div class="quiz-page">
+  <nav class="quiz-nav">
+    <a href="../index.html" class="back-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Brain Explorer
+    </a>
+    <span class="nav-brand">PSYKED</span>
+  </nav>
+  <main class="quiz-main">
+    <div class="progress-wrap" id="progress-wrap" style="display:none">
+      <div class="progress-meta">
+        <span class="progress-label">Brain Scan</span>
+        <span class="progress-count" id="progress-count">Question 1 of 10</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:10%"></div></div>
+    </div>
+    <div id="intro-screen">
+      <div class="intro-badge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        Neuroscience-Based Assessment
+      </div>
+      <h1 class="intro-title">Discover Your<br>Brain Performance Profile</h1>
+      <p class="intro-sub">10 targeted questions to map your weakest brain regions and generate a personalized 30-day protocol stack &mdash; built on cognitive neuroscience, not generic wellness advice.</p>
+      <div class="intro-stats">
+        <div><span class="stat-num">10</span><span class="stat-label">Questions</span></div>
+        <div><span class="stat-num">9</span><span class="stat-label">Brain Regions</span></div>
+        <div><span class="stat-num">3 min</span><span class="stat-label">To complete</span></div>
+      </div>
+      <button class="btn-start" id="btn-start">Start the Scan
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+    </div>
+    <div class="question-card" id="q-0">
+      <span class="q-tag">Q1 &middot; Focus &amp; Willpower</span>
+      <p class="q-text">&ldquo;When you sit down to do focused work, how quickly does your mind start wandering?&rdquo;</p>
+      <div class="answers">
+        <div class="answer-card" data-scores='{"PFC": 3, "Thalamus": 2}'><div class="answer-letter">A</div><div class="answer-text">Within 5 minutes &mdash; I can&rsquo;t sustain focus</div></div>
+        <div class="answer-card" data-scores='{"PFC": 2, "Thalamus": 1}'><div class="answer-letter">B</div><div class="answer-text">After 15&ndash;20 minutes &mdash; then I need a reset</div></div>
+        <div class="answer-card" data-scores='{"PFC": 1}'><div class="answer-letter">C</div><div class="answer-text">I focus well but crash hard after an hour</div></div>
+        <div class="answer-card" data-scores='{}'><div class="answer-letter">D</div><div class="answer-text">I can lock in for 90+ minutes without issue</div></div>
+      </div>
+    </div>
+    <div class="question-card" id="q-1">
+      <span class="q-tag">Q2 &middot; Pressure Performance</span>
+      <p class="q-text">&ldquo;In high-stakes moments &mdash; competitions, presentations, important conversations &mdash; you tend to:&rdquo;</p>
+      <div class="answers">
+        <div class="answer-card" data-scores='{"Amygdala": 3}'><div class="answer-letter">A</div><div class="answer-text">Freeze up or underperform significantly</div></div>
+        <div class="answer-card" data-scores='{"Amygdala": 2}'><div class="answer-letter">B</div><div class="answer-text">Get anxious but push through &mdash; performance suffers a bit</div></div>
+        <div class="answer-card" data-scores='{"Amygdala": 1}'><div class="answer-letter">C</div><div class="answer-text">Feel nerves but generally perform close to my best</div></div>
+        <div class="answer-card" data-scores='{}'><div class="answer-letter">D</div><div class="answer-text">Thrive under pressure &mdash; I&rsquo;m at my best</div></div>
+      </div>
+    </div>
+    <div class="question-card" id="q-2">
+      <span class="q-tag">Q3 &middot; Learning New Skills</span>
+      <p class="q-text">&ldquo;When learning a new physical skill or technique, how long does it typically take to feel natural?&rdquo;</p>
+      <div class="answers">
+        <div class="answer-card" data-scores='{"Cerebellum": 3, "Hippocampus": 2}'><div class="answer-letter">A</div><div class="answer-text">Much longer than others &mdash; I struggle to get it to click</div></div>
+        <div class="answer-card" data-scores='{"Cerebellum": 2, "Hippocampus": 1}'><div class="answer-letter">B</div><div class="answer-text">Average &mdash; takes consistent practice over weeks</div></div>
+        <div class="answer-card" data-scores='{"Cerebellum": 1}'><div class="answer-letter">C</div><div class="answer-text">Fairly quick &mdash; I pick things up after a few sessions</div></div>
+        <div class="answer-card" data-scores='{}'><div class="answer-letter">D</div><div class="answer-text">Fast &mdash; new skills feel natural quickly</div></div>
+      </div>
+    </div>
+    <div class="question-card" id="q-3">
+      <span class="q-tag">Q4 &middot; Pain &amp; Grit</span>
+      <p class="q-text">&ldquo;When things get hard &mdash; physically or mentally &mdash; what happens?&rdquo;</p>
+      <div class="answers">
+        <div class="answer-card" data-scores='{"ACC": 3}'><div class="answer-letter">A</div><div class="answer-text">I back off. The discomfort usually wins</div></div>
+        <div class="answer-card" data-scores='{"ACC": 2}'><div class="answer-letter">B</div><div class="answer-text">I push through but it takes a lot of mental effort</div></div>
+        <div class="answer-card" data-scores='{"ACC": 1}'><div class="answer-letter">C</div><div class="answer-text">I can grind through most things, but not at my best</div></div>
+        <div class="answer-card" data-scores='{}'><div class="answer-letter">D</div><div class="answer-text">Discomfort doesn&rsquo;t stop me &mdash; I push past it</div></div>
+      </div>
+    </div>
+    <div class="question-card" id="q-4">
+      <span class="q-tag">Q5 &middot; Habit Consistency</span>
+      <p class="q-text">&ldquo;How consistent are you with your training routines and performance habits?&rdquo;</p>
+      <div class="answers">
+        <div class="answer-card" data-scores='{"BasalGanglia": 3}'><div class="answer-letter">A</div><div class="answer-text">I start strong then fall off &mdash; cycles of on/off</div></div>
+        <div class="answer-card" data-scores='{"BasalGanglia": 2}'><div class="answer-letter">B</div><div class="answer-text">Reasonably consistent but miss frequently</div></div>
+        <div class="answer-card" data-scores='{"BasalGanglia": 1}'><div class="answer-letter">C</div><div class="answer-text">Pretty consistent with occasional gaps</div></div>
+        <div class="answer-card" data-scores='{}'><div class="answer-letter">D</div><div class="answer-text">Very consistent &mdash; my routines are automatic</div></div>
+      </div>
+    </div>
+    <div class="question-card" id="q-5">
+      <span class="q-tag">Q6 &middot; Sleep &amp; Recovery</span>
+      <p class="q-text">&ldquo;How do you feel most mornings when you wake up?&rdquo;</p>
+      <div class="answers">
+        <div class="answer-card" data-scores='{"BrainStem": 3, "Thalamus": 2}'><div class="answer-letter">A</div><div class="answer-text">Groggy, tired, need coffee immediately &mdash; never feel recovered</div></div>
+        <div class="answer-card" data-scores='{"BrainStem": 2, "Thalamus": 1}'><div class="answer-letter">B</div><div class="answer-text">Okay but not great &mdash; takes a while to feel human</div></div>
+        <div class="answer-card" data-scores='{"BrainStem": 1}'><div class="answer-letter">C</div><div class="answer-text">Generally okay &mdash; occasional rough nights</div></div>
+        <div class="answer-card" data-scores='{}'><div class="answer-letter">D</div><div class="answer-text">Refreshed and ready &mdash; sleep is solid</div></div>
+      </div>
+    </div>
+    <div class="question-card" id="q-6">
+      <span class="q-tag">Q7 &middot; Memory &amp; Retention</span>
+      <p class="q-text">&ldquo;When someone coaches or instructs you, how well do you retain it?&rdquo;</p>
+      <div class="answers">
+        <div class="answer-card" data-scores='{"Hippocampus": 3, "Temporal": 2}'><div class="answer-letter">A</div><div class="answer-text">I forget most of it within an hour &mdash; need constant reminders</div></div>
+        <div class="answer-card" data-scores='{"Hippocampus": 2, "Temporal": 1}'><div class="answer-letter">B</div><div class="answer-text">I remember the key points but lose the details</div></div>
+        <div class="answer-card" data-scores='{"Hippocampus": 1}'><div class="answer-letter">C</div><div class="answer-text">I retain most of it with some review</div></div>
+        <div class="answer-card" data-scores='{}'><div class="answer-letter">D</div><div class="answer-text">Excellent retention &mdash; I rarely need things repeated</div></div>
+      </div>
+    </div>
+    <div class="question-card" id="q-7">
+      <span class="q-tag">Q8 &middot; Stress Recovery</span>
+      <p class="q-text">&ldquo;After a stressful event or setback, how long does it take to mentally reset?&rdquo;</p>
+      <div class="answers">
+        <div class="answer-card" data-scores='{"Amygdala": 3, "PFC": 1}'><div class="answer-letter">A</div><div class="answer-text">Hours or days &mdash; I replay it constantly</div></div>
+        <div class="answer-card" data-scores='{"Amygdala": 2}'><div class="answer-letter">B</div><div class="answer-text">An hour or two of overthinking, then I come back</div></div>
+        <div class="answer-card" data-scores='{"Amygdala": 1}'><div class="answer-letter">C</div><div class="answer-text">I shake it off within 20&ndash;30 minutes</div></div>
+        <div class="answer-card" data-scores='{}'><div class="answer-letter">D</div><div class="answer-text">Fast &mdash; I process and move on quickly</div></div>
+      </div>
+    </div>
+    <div class="question-card" id="q-8">
+      <span class="q-tag">Q9 &middot; Attention &amp; Distraction</span>
+      <p class="q-text">&ldquo;In your environment (gym, office, competition), how easily are you pulled off task?&rdquo;</p>
+      <div class="answers">
+        <div class="answer-card" data-scores='{"Thalamus": 3, "PFC": 1}'><div class="answer-letter">A</div><div class="answer-text">Highly distractible &mdash; every noise or movement breaks my focus</div></div>
+        <div class="answer-card" data-scores='{"Thalamus": 2}'><div class="answer-letter">B</div><div class="answer-text">Somewhat distractible &mdash; needs active effort to stay on task</div></div>
+        <div class="answer-card" data-scores='{"Thalamus": 1}'><div class="answer-letter">C</div><div class="answer-text">Usually focused &mdash; major distractions only</div></div>
+        <div class="answer-card" data-scores='{}'><div class="answer-letter">D</div><div class="answer-text">Rarely distracted &mdash; I filter out noise easily</div></div>
+      </div>
+    </div>
+    <div class="question-card" id="q-9">
+      <span class="q-tag">Q10 &middot; Primary Goal</span>
+      <p class="q-text">&ldquo;Your #1 performance priority right now is:&rdquo;</p>
+      <div class="answers">
+        <div class="answer-card" data-goal="PFC"><div class="answer-letter">A</div><div class="answer-text">Better focus and mental discipline</div></div>
+        <div class="answer-card" data-goal="Amygdala"><div class="answer-letter">B</div><div class="answer-text">Managing stress and performing under pressure</div></div>
+        <div class="answer-card" data-goal="Hippocampus"><div class="answer-letter">C</div><div class="answer-text">Learning faster and retaining more</div></div>
+        <div class="answer-card" data-goal="BasalGanglia"><div class="answer-letter">D</div><div class="answer-text">Building unbreakable habits</div></div>
+        <div class="answer-card" data-goal="BrainStem"><div class="answer-letter">E</div><div class="answer-text">Improving sleep and recovery</div></div>
+        <div class="answer-card" data-goal="ACC"><div class="answer-letter">F</div><div class="answer-text">More grit &mdash; pushing through discomfort</div></div>
+        <div class="answer-card" data-goal="Cerebellum"><div class="answer-letter">G</div><div class="answer-text">Technical skill and movement quality</div></div>
+      </div>
+    </div>
+    <div id="results-screen">
+      <div class="results-header">
+        <div class="results-badge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          Analysis Complete
+        </div>
+        <h2 class="results-title" id="results-title">Your Brain Performance Profile</h2>
+        <p class="results-sub" id="results-sub">Based on your responses, here are your 3 priority brain regions that need the most targeted work.</p>
+      </div>
+      <div class="priority-stack" id="priority-stack"></div>
+      <div class="protocol-teaser" id="protocol-teaser">
+        <div class="pt-stripe"></div>
+        <div class="pt-label">Protocol #1 &mdash; Your Top Priority <span class="pt-divider"></span></div>
+        <h3 class="pt-title" id="pt-title"></h3>
+        <p class="pt-desc" id="pt-desc"></p>
+        <div class="pt-locked">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <span><strong>4 more protocols</strong> for your top region + full stacks for your other 2 priority regions are included in your personalized plan.</span>
+        </div>
+      </div>
+      <div class="gated-block">
+        <div class="gated-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        </div>
+        <h3 class="gated-title">Your Full 30-Day Brain Performance Stack</h3>
+        <p class="gated-desc">Get your complete personalized protocol plan &mdash; built specifically around your 3 priority regions. Immediate PDF download.</p>
+        <ul class="gated-features">
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            5 targeted protocols per priority region (15 total)
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            Full 30-day protocol calendar with daily actions
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            Morning &amp; evening stack personalized to your profile
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            Downloadable PDF &mdash; yours to keep forever
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            Neuroscience references &amp; implementation notes
+          </li>
+        </ul>
+        <a href="https://latterligfett.gumroad.com/l/lqyis" class="btn-gumroad" target="_blank" rel="noopener">
+          Get My Full Protocol Plan &nbsp;<span class="price-badge">$17</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+        <p class="gated-guarantee">One-time payment &middot; Instant download &middot; No subscription</p>
+      </div>
+      <div class="email-section">
+        <h3 class="es-title">Get Your Free Summary by Email</h3>
+        <p class="es-sub">Enter your email and we'll send you a summary of your profile and your #1 priority protocol &mdash; free.</p>
+        <form class="email-form" name="brain-quiz-results" method="POST" data-netlify="true" id="email-form">
+          <input type="hidden" name="form-name" value="brain-quiz-results"/>
+          <input type="hidden" name="results" id="form-results-field"/>
+          <input type="email" name="email" class="email-input" placeholder="your@email.com" required/>
+          <button type="submit" class="btn-email">Send My Results</button>
+        </form>
+        <p class="email-confirm" id="email-confirm">Sent! Check your inbox in a few minutes.</p>
+      </div>
+    </div>
+  </main>
+</div>
+<script>
+// ═══════════════════════════════════════════════════
+//  PSYKED BRAIN PERFORMANCE QUIZ — Vanilla JS Engine
+// ═══════════════════════════════════════════════════
+
+// ── Region metadata ─────────────────────────────────
+const REGIONS = {
+  PFC:         { name: "Prefrontal Cortex",        abbr: "PFC",    maxScore: 9  },
+  Amygdala:    { name: "Amygdala",                 abbr: "AMY",    maxScore: 10 },
+  Hippocampus: { name: "Hippocampus",              abbr: "HIPPO",  maxScore: 8  },
+  Cerebellum:  { name: "Cerebellum",               abbr: "CRB",    maxScore: 5  },
+  ACC:         { name: "Anterior Cingulate Cortex",abbr: "ACC",    maxScore: 6  },
+  BrainStem:   { name: "Brain Stem",               abbr: "BS",     maxScore: 5  },
+  BasalGanglia:{ name: "Basal Ganglia",            abbr: "BG",     maxScore: 6  },
+  Temporal:    { name: "Temporal Lobe",            abbr: "TL",     maxScore: 5  },
+  Thalamus:    { name: "Thalamus",                 abbr: "THL",    maxScore: 8  }
+};
+
+const INSIGHTS = {
+  PFC: "Your prefrontal cortex is under strain — likely from decision fatigue, poor sleep, or chronic stress. Your willpower muscle needs systematic training, not just more effort.",
+  Amygdala: "Your amygdala is overactive — you’re running on a hair-trigger stress response. The good news: it’s one of the most trainable regions. Targeted breathwork and progressive exposure will rewire it fast.",
+  Hippocampus: "Your hippocampus is running below capacity. You’re learning slower than your potential allows. Aerobic exercise and sleep optimization are the two fastest levers — and both are free.",
+  Cerebellum: "Your cerebellum needs deliberate practice — specifically, feedback-rich repetition. You’re likely practicing volume without quality. Focused skill sessions with immediate feedback will unlock rapid motor improvement.",
+  ACC: "Your anterior cingulate cortex — your grit circuit — is underdeveloped. The discomfort signal is winning too often. This is the most trainable form of mental toughness, but it requires intentional high-intensity exposure.",
+  BrainStem: "Your autonomic foundation is shaky — poor sleep, breathing patterns, or recovery protocols. Every other brain region runs on what the brain stem provides. Fix this first.",
+  BasalGanglia: "Your basal ganglia habit loops are weak or misfiring. You’re relying on willpower where you should be running on automation. The dopamine reward system needs recalibration.",
+  Temporal: "Your temporal lobe processing is underutilized — you’re not absorbing and retaining information at your cognitive potential. Active listening and verbal rehearsal protocols will compound fast.",
+  Thalamus: "Your thalamus is overwhelmed — you’re living in a high-noise environment and your sensory gating is struggling to filter it. Sleep quality and environmental design are your fastest wins."
+};
+
+const PROTOCOL_1 = {
+  PFC: {
+    title: "The 25-Minute Deep Work Block",
+    desc: "Set a timer for exactly 25 minutes. One task only — no switching. After the timer: 5 minutes complete rest (no screens). Repeat up to 4 cycles. This is not a productivity hack — it’s a PFC training protocol. Consistent structured focus builds the neural circuits for sustained attention."
+  },
+  Amygdala: {
+    title: "Physiological Sigh + Box Breathing Protocol",
+    desc: "Before any high-stakes moment: 2 quick inhales through the nose (double-inhale), then one long exhale through the mouth. Repeat 3–5 times. Follow with box breathing (4 counts in — 4 hold — 4 out — 4 hold) for 3 minutes. Activates the parasympathetic system and directly downregulates amygdala reactivity."
+  },
+  Hippocampus: {
+    title: "Zone 2 Aerobic Protocol",
+    desc: "30–45 minutes of continuous aerobic exercise at 60–70% max heart rate (conversational pace), 3–4x per week. Walking, cycling, rowing — any steady-state cardio works. This is the single most evidence-backed intervention for hippocampal neurogenesis. BDNF release during Zone 2 directly accelerates learning and memory consolidation."
+  },
+  Cerebellum: {
+    title: "Slow-Motion Deliberate Practice Session",
+    desc: "20-minute focused skill sessions only. Perform your target movement at 30% speed with 100% cognitive attention. No reps on autopilot. Each rep: feel, adjust, improve. Quality over volume — your cerebellum learns from precise feedback, not repetition for its own sake."
+  },
+  ACC: {
+    title: "The Voluntary Discomfort Protocol",
+    desc: "Daily: choose one uncomfortable thing and do it intentionally — cold shower, hard interval, uncomfortable conversation, holding a difficult position. Start small (20 seconds) and increase weekly. The ACC is trained specifically by overriding the quit signal. Without this stimulus, the grit circuit stays underdeveloped."
+  },
+  BrainStem: {
+    title: "Sleep Architecture Optimization",
+    desc: "Dark room (blackout curtains), cool temperature (65–68°F / 18–20°C), no screens 60 minutes before bed. Same wake time every day ±30 minutes — non-negotiable. The brain stem controls your autonomic baseline. Consistent sleep timing is the single highest-leverage intervention for brain stem optimization."
+  },
+  BasalGanglia: {
+    title: "Environment Design + Habit Stacking",
+    desc: "Identify one target habit. Attach it to an existing automatic behavior (your anchor). Make the desired behavior require zero friction (equipment out, app open, gear ready). Remove friction from good habits; add friction to bad ones. The basal ganglia runs on environmental cues — design the environment, don’t rely on willpower."
+  },
+  Temporal: {
+    title: "Active Recall After Every Learning Session",
+    desc: "Within 10 minutes of any coaching, meeting, or learning session: close everything and write down everything you remember — free recall, no notes. Then review what you missed. This simple act of retrieval practice doubles retention versus passive re-reading and directly engages temporal lobe consolidation pathways."
+  },
+  Thalamus: {
+    title: "Sensory Hygiene Protocol",
+    desc: "60 minutes per day of intentional low-stimulation: no music, podcasts, or background noise. One task, one sensory input at a time. Your thalamus acts as the brain’s sensory relay and filter. Chronic high-stimulation environments overwhelm it. Structured quiet training restores filtering capacity."
+  }
+};
+
+// ── Quiz state ───────────────────────────────────────
+let currentQ = 0;
+const TOTAL = 10;
+const scores = { PFC:0, Amygdala:0, Hippocampus:0, Cerebellum:0, ACC:0, BrainStem:0, BasalGanglia:0, Temporal:0, Thalamus:0 };
+let goalRegion = null;
+const answers = Array(TOTAL).fill(null);
+
+// ── DOM refs ─────────────────────────────────────────
+const introScreen    = document.getElementById('intro-screen');
+const resultsScreen  = document.getElementById('results-screen');
+const progressWrap   = document.getElementById('progress-wrap');
+const progressFill   = document.getElementById('progress-fill');
+const progressCount  = document.getElementById('progress-count');
+
+// ── Start quiz ───────────────────────────────────────
+document.getElementById('btn-start').addEventListener('click', () => {
+  introScreen.style.display = 'none';
+  progressWrap.style.display = 'block';
+  showQuestion(0);
+});
+
+function showQuestion(idx) {
+  const card = document.getElementById('q-' + idx);
+  if (!card) return;
+  card.style.display = 'block';
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      card.classList.add('visible');
+    });
+  });
+  updateProgress(idx);
+}
+
+function hideQuestion(idx, cb) {
+  const card = document.getElementById('q-' + idx);
+  if (!card) { cb && cb(); return; }
+  card.classList.add('exit');
+  card.classList.remove('visible');
+  setTimeout(() => {
+    card.style.display = 'none';
+    card.classList.remove('exit');
+    cb && cb();
+  }, 360);
+}
+
+function updateProgress(idx) {
+  const pct = Math.round(((idx + 1) / TOTAL) * 100);
+  progressFill.style.width = pct + '%';
+  progressCount.textContent = 'Question ' + (idx + 1) + ' of ' + TOTAL;
+}
+
+// ── Answer selection ─────────────────────────────────
+document.addEventListener('click', (e) => {
+  const card = e.target.closest('.answer-card');
+  if (!card) return;
+  const qCard = card.closest('.question-card');
+  if (!qCard) return;
+
+  const idx = parseInt(qCard.id.replace('q-', ''));
+  if (answers[idx] !== null) return; // already answered
+
+  // Deselect others in same question
+  qCard.querySelectorAll('.answer-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  answers[idx] = card;
+
+  // Apply scores
+  if (card.dataset.scores) {
+    const sc = JSON.parse(card.dataset.scores);
+    Object.entries(sc).forEach(([region, pts]) => {
+      if (scores[region] !== undefined) scores[region] += pts;
+    });
+  }
+  if (card.dataset.goal) {
+    goalRegion = card.dataset.goal;
+  }
+
+  // Auto-advance after 0.4s
+  setTimeout(() => {
+    const next = idx + 1;
+    hideQuestion(idx, () => {
+      if (next < TOTAL) {
+        showQuestion(next);
+        currentQ = next;
+      } else {
+        showResults();
+      }
+    });
+  }, 400);
+});
+
+// ── Compute results ──────────────────────────────────
+function computeTop3() {
+  // Apply 1.5x multiplier to goal region
+  const adjusted = Object.fromEntries(
+    Object.entries(scores).map(([r, s]) => [r, r === goalRegion ? s * 1.5 : s])
+  );
+  // Sort descending
+  return Object.entries(adjusted)
+    .sort((a, b) => b[1] - a[1])
+    .filter(([, s]) => s > 0)
+    .slice(0, 3);
+}
+
+// ── Show results ─────────────────────────────────────
+function showResults() {
+  progressWrap.style.display = 'none';
+  resultsScreen.classList.add('visible');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  const top3 = computeTop3();
+  if (top3.length === 0) {
+    // All zeros - exceptional profile
+    document.getElementById('results-title').textContent = 'Exceptional Baseline Profile';
+    document.getElementById('results-sub').textContent = 'Your scores suggest a high-performing baseline across all regions. Use the protocol plan to optimize further.';
+    return;
+  }
+
+  // Build region cards
+  const stack = document.getElementById('priority-stack');
+  const rankClasses = ['r1', 'r2', 'r3'];
+  const rankLabels = ['#1', '#2', '#3'];
+  const maxRawScore = Math.max(...Object.values(scores), 1);
+
+  top3.forEach(([region, adjScore], i) => {
+    const info = REGIONS[region];
+    const rawScore = scores[region];
+    const barPct = Math.min(100, Math.round((rawScore / maxRawScore) * 100));
+    const insight = INSIGHTS[region] || '';
+
+    const card = document.createElement('div');
+    card.className = 'region-card ' + rankClasses[i];
+    card.innerHTML = `
+      <div class="rc-glow"></div>
+      <div class="rc-header">
+        <div class="rc-name-row">
+          <div class="rc-rank">${rankLabels[i]}</div>
+          <div>
+            <div class="rc-name">${info.name}</div>
+            <div class="rc-abbr">${info.abbr}</div>
+          </div>
+        </div>
+        <div class="rc-score">Priority Score ${rawScore}pts</div>
+      </div>
+      <div class="rc-bar-track"><div class="rc-bar-fill" data-pct="${barPct}"></div></div>
+      <div class="rc-insight">${insight}</div>
+    `;
+    stack.appendChild(card);
+  });
+
+  // Animate bars after paint
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      document.querySelectorAll('.rc-bar-fill').forEach(bar => {
+        bar.style.width = bar.dataset.pct + '%';
+      });
+    }, 100);
+  });
+
+  // ── Brain Stack product recommendations ──────────────
+  // Remove any previous recs section (e.g. quiz retake)
+  const oldRecs = document.getElementById('brain-stack-recs');
+  if (oldRecs) oldRecs.remove();
+
+  const seen = new Set();
+  const recs = [];
+  top3.slice(0, 2).forEach(([region]) => {
+    (REGION_PRODUCTS[region] || []).forEach(p => {
+      if (!seen.has(p.url)) { seen.add(p.url); recs.push(p); }
+    });
+  });
+  const topRecs = recs.slice(0, 4);
+
+  if (topRecs.length) {
+    const icons = { book:'📚', supp:'💊', tool:'🛠️' };
+    const recsEl = document.createElement('div');
+    recsEl.id = 'brain-stack-recs';
+    recsEl.className = 'recs-section';
+    recsEl.innerHTML = `
+      <h3 class="recs-heading">Your Brain Stack</h3>
+      <p class="recs-subline">Recommended for your priority regions</p>
+      <div class="recs-grid">
+        ${topRecs.map(p => `
+          <a href="${p.url}" target="_blank" rel="noopener sponsored" class="rec-card">
+            <span class="rec-icon">${icons[p.type] || '📚'}</span>
+            <div class="rec-body">
+              <span class="rec-name">${p.title}</span>
+              <span class="rec-author">${p.author}</span>
+              <span class="rec-why">${p.why}</span>
+            </div>
+            <span class="rec-arrow">→</span>
+          </a>
+        `).join('')}
+      </div>
+      <p class="recs-disclosure">As an Amazon Associate I earn from qualifying purchases.</p>
+    `;
+    const teaser = document.getElementById('protocol-teaser');
+    teaser.parentNode.insertBefore(recsEl, teaser);
+  }
+
+  // Protocol teaser for top region
+  const topRegion = top3[0][0];
+  const proto = PROTOCOL_1[topRegion];
+  if (proto) {
+    document.getElementById('pt-title').textContent = proto.title;
+    document.getElementById('pt-desc').textContent = proto.desc;
+  }
+
+  // Update sub headline
+  const totalProtocols = top3.length * 5;
+  document.getElementById('results-sub').textContent =
+    'Based on your responses, your Priority Stack targets ' + top3.length +
+    ' brain regions. Your full plan includes ' + totalProtocols + ' targeted protocols.';
+
+  // Set email form hidden field
+  const resultsData = JSON.stringify({ top3: top3.map(([r]) => r), goalRegion });
+  const field = document.getElementById('form-results-field');
+  if (field) field.value = resultsData;
+}
+
+// ── Amazon affiliate products per region ────────────
+const REGION_PRODUCTS = {
+  prefrontal: [
+    { type:'book', title:'Atomic Habits',         author:'James Clear',    url:'https://www.amazon.com/dp/0735211299?tag=psyked20-20', why:'Engineering PFC-driven habit loops that actually stick' },
+    { type:'book', title:'Your Brain at Work',    author:'David Rock',     url:'https://www.amazon.com/dp/0061771295?tag=psyked20-20', why:'Maximise PFC output under pressure and decision fatigue' },
+    { type:'supp', title:'Omega-3 Fish Oil 2000mg', author:'Nature Made', url:'https://www.amazon.com/dp/B00CQ2LB5Q?tag=psyked20-20',  why:'DHA structurally supports prefrontal neural density' },
+  ],
+  hippocampus: [
+    { type:'book', title:'Limitless',             author:'Jim Kwik',       url:'https://www.amazon.com/dp/1401958230?tag=psyked20-20', why:'Accelerated learning and memory encoding protocols' },
+    { type:'supp', title:"Lion's Mane Mushroom",  author:'Host Defense',   url:'https://www.amazon.com/dp/B00DXOIKM0?tag=psyked20-20', why:'NGF stimulation — directly drives hippocampal neurogenesis' },
+    { type:'supp', title:'Omega-3 Fish Oil 2000mg', author:'Nature Made', url:'https://www.amazon.com/dp/B00CQ2LB5Q?tag=psyked20-20',  why:'DHA is the key structural lipid in hippocampal neurons' },
+  ],
+  amygdala: [
+    { type:'book', title:'Thinking, Fast and Slow', author:'Daniel Kahneman', url:'https://www.amazon.com/dp/0374533555?tag=psyked20-20', why:'Understand and override amygdala-driven threat reactivity' },
+    { type:'supp', title:'Magnesium Glycinate',   author:'Pure Encapsulations', url:'https://www.amazon.com/dp/B00G8G4EH0?tag=psyked20-20', why:'Clinically shown to reduce amygdala stress reactivity' },
+  ],
+  cerebellum: [
+    { type:'book', title:'The Brain That Changes Itself', author:'Norman Doidge', url:'https://www.amazon.com/dp/0143113100?tag=psyked20-20', why:'Neuroplasticity of motor learning — how the cerebellum rewires' },
+  ],
+  acc: [
+    { type:'book', title:'Mindset',               author:'Carol Dweck',    url:'https://www.amazon.com/dp/0345472322?tag=psyked20-20', why:'Rewire your ACC grit circuit with a growth mindset' },
+    { type:'book', title:'Peak Mind',             author:'Amishi Jha',     url:'https://www.amazon.com/dp/0062992317?tag=psyked20-20', why:'Science-backed attention and effort-allocation training' },
+  ],
+  brainstem: [
+    { type:'book', title:'Why We Sleep',          author:'Matthew Walker', url:'https://www.amazon.com/dp/1501144316?tag=psyked20-20', why:'The definitive book on brainstem sleep regulation and recovery' },
+    { type:'supp', title:'Magnesium Glycinate',   author:'Pure Encapsulations', url:'https://www.amazon.com/dp/B00G8G4EH0?tag=psyked20-20', why:'Supports brainstem sleep cycle regulation and deep recovery' },
+    { type:'tool', title:'Manta Sleep Mask',      author:'Manta',          url:'https://www.amazon.com/dp/B07FNZRZ9G?tag=psyked20-20', why:'Complete blackout — maximises brainstem melatonin production' },
+  ],
+  basalganglia: [
+    { type:'book', title:'Atomic Habits',         author:'James Clear',    url:'https://www.amazon.com/dp/0735211299?tag=psyked20-20', why:'The definitive playbook for engineering basal ganglia habit loops' },
+    { type:'book', title:'The Molecule of More',  author:'Daniel Lieberman', url:'https://www.amazon.com/dp/1946885622?tag=psyked20-20', why:'Understand your dopamine reward circuits and drive' },
+  ],
+  temporal: [
+    { type:'book', title:'The Brain That Changes Itself', author:'Norman Doidge', url:'https://www.amazon.com/dp/0143113100?tag=psyked20-20', why:'Neuroplasticity in language, auditory processing, and learning' },
+  ],
+  thalamus: [
+    { type:'book', title:'Why We Sleep',          author:'Matthew Walker', url:'https://www.amazon.com/dp/1501144316?tag=psyked20-20', why:'Thalamic sleep spindles — the link between sleep quality and performance' },
+    { type:'tool', title:'Manta Sleep Mask',      author:'Manta',          url:'https://www.amazon.com/dp/B07FNZRZ9G?tag=psyked20-20', why:'Complete blackout — protects thalamic melatonin gating' },
+    { type:'supp', title:'Magnesium Glycinate',   author:'Pure Encapsulations', url:'https://www.amazon.com/dp/B00G8G4EH0?tag=psyked20-20', why:'Supports thalamic deep sleep restoration' },
+  ],
+};
+
+// ── Email form ───────────────────────────────────────
+document.getElementById('email-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const data = new FormData(form);
+  try {
+    await fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(data).toString() });
+  } catch(_) {}
+  form.style.display = 'none';
+  document.getElementById('email-confirm').style.display = 'block';
+});
+</script>
+</body>
+</html>
