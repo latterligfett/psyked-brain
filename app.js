@@ -1020,7 +1020,7 @@ canvas.addEventListener('mousemove', (e) => {
         const region = getMeshRegion(hoveredMesh.name) || REGIONS.overview;
         const showName = labelMode === 0;
         hoverLabel.textContent = showName
-          ? (REGION_SHORT[region.id] || region.name)
+          ? (region.name)
           : (REGION_LETTER[region.id] || region.name[0]);
         hoverLabel.style.left = `${x + 14}px`;
         hoverLabel.style.top  = `${y - 28}px`;
