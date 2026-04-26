@@ -984,8 +984,8 @@ let   panelOpen = false;
 
 // Toolbar state — declared early so updateRegionLabels / updateAxisLabels can read them
 let axesVisible = true;
-// labelMode: 0 = letter only (default), 1 = full name, 2 = off
-let labelMode = 0;
+// labelMode: 0 = full name on hover, 1 = letter only (default), 2 = off / crosshair
+let labelMode = 1;
 
 function getMouseNDC(event) {
   const rect = canvas.getBoundingClientRect();
@@ -1013,14 +1013,21 @@ canvas.addEventListener('mousemove', (e) => {
     hoveredMesh = hit;
 
     if (hoveredMesh) {
-      canvas.style.cursor = 'pointer';
+      // Mode 2 = off: always crosshair, no hover label
+      canvas.style.cursor = labelMode === 2 ? 'crosshair' : 'pointer';
 
-      // Show hover label — just the region letter
-      const region = getMeshRegion(hoveredMesh.name) || REGIONS.overview;
-      hoverLabel.textContent = REGION_LETTER[region.id] || region.name;
-      hoverLabel.style.left  = `${x + 14}px`;
-      hoverLabel.style.top   = `${y - 28}px`;
-      hoverLabel.classList.add('visible');
+      if (labelMode !== 2) {
+        const region = getMeshRegion(hoveredMesh.name) || REGIONS.overview;
+        const showName = labelMode === 0;
+        hoverLabel.textContent = showName
+          ? (REGION_SHORT[region.id] || region.name)
+          : (REGION_LETTER[region.id] || region.name[0]);
+        hoverLabel.style.left = `${x + 14}px`;
+        hoverLabel.style.top  = `${y - 28}px`;
+        hoverLabel.classList.add('visible');
+      } else {
+        hoverLabel.classList.remove('visible');
+      }
     } else {
       canvas.style.cursor = 'crosshair';
       hoverLabel.classList.remove('visible');
@@ -1362,11 +1369,11 @@ btnAxes?.addEventListener('click', () => {
 });
 
 function applyLabelMode() {
-  // Mode 0: letter only | Mode 1: full name | Mode 2: off
+  // Mode 0: full name on hover | Mode 1: letter only | Mode 2: off (crosshair)
   const MODES = [
-    { icon: 'A',   label: 'Letter', active: true  },
     { icon: 'Abc', label: 'Names',  active: true  },
-    { icon: '—',   label: 'Labels', active: false },
+    { icon: 'A',   label: 'Letter', active: true  },
+    { icon: '—',   label: 'Off',   active: false },
   ];
   const m = MODES[labelMode];
   if (btnLabels) {
@@ -1380,7 +1387,7 @@ function applyLabelMode() {
       el.style.display = 'none';
     } else {
       el.style.display = 'block';
-      el.textContent = labelMode === 0 ? letter : shortName;
+      el.textContent = labelMode === 0 ? shortName : letter;
     }
   });
 }
