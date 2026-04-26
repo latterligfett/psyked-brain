@@ -477,6 +477,27 @@ function getMeshRegion(name) {
 // DOM REFS
 // ═══════════════════════════════════════════════════════════
 
+// ═══════════════════════════════════════════════════════════
+// CLICK LOG — universal interaction tracker
+//═══════════════════════════════════════════════════════════
+
+/**
+ * Log ALL user interactions for debugging & coordination
+ * @param {string} category - e.g. 'brain', 'panel', 'toolbar', 'grid', 'form', 'keyboard'
+ * @param {string} action   - e.g. 'click-region', 'open-panel', 'toggle-axes'
+ * @param {string} label   - human-readable detail
+ */
+function trackAction(category, action, label) {
+  const entry = `[${category}] ${action}${label ? ' → ' + label : ''}`;
+  console.log('👆', entry);
+  // TODO: send to analytics endpoint if needed
+  window._psykedActions = window._psykedActions || [];
+  window._psykedActions.push({ t: Date.now(), cat: category, act: action, lbl: label });
+}
+
+// ─────────────────────────────────────────────────────────
+// INIT — after DOM and REGIONS are ready
+// ─────────────────────────────────────────────────────────
 const canvas        = document.getElementById('brainCanvas');
 const loader        = document.getElementById('loader');
 const brainHint     = document.getElementById('brainHint');
@@ -1028,11 +1049,13 @@ canvas.addEventListener('click', (e) => {
   const hit = hitTest();
 
   // 🔍 DEBUG: log every click
+  trackAction('brain', 'click', hit.name);
   if (hit) {
     const region = getMeshRegion(hit.name);
     console.log(`[CLICK] mesh="${hit.name}" → region="${region ? region.id : 'NULL (→ Brain Overview)'}"`)
   } else {
-    console.log('[CLICK] no mesh hit (empty space)')
+    console.log('[CLICK] no mesh hit (empty space)');
+    trackAction('brain', 'click', 'empty-space');
   }
 
 
@@ -1052,6 +1075,7 @@ canvas.addEventListener('click', (e) => {
     // ── Second click on same mesh → open panel ──
     primedMesh = null;
     hoverLabel.classList.remove('visible');
+    trackAction('brain', 'open-panel', region.id);
     openPanel(region, hit);
     brainHint.classList.add('hidden');
   } else {
@@ -1134,6 +1158,7 @@ canvas.addEventListener('touchend', (e) => {
 // ═══════════════════════════════════════════════════════════
 
 function openPanel(region, mesh = null) {
+  trackAction('panel', 'open', region.id);
   // Update selection
   if (selectedMesh) resetMesh(selectedMesh);
   selectedMesh = mesh;
@@ -1174,9 +1199,10 @@ function closePanel() {
   setTimeout(() => { controls.dynamicDampingFactor = 0.05; }, 400);
 }
 
-panelClose.addEventListener('click', closePanel);
-panelOverlay.addEventListener('click', closePanel);
+panelClose.addEventListener('click', () => { trackAction('panel', 'close', sidePanel.dataset.region || 'unknown'); closePanel(); });
+panelOverlay.addEventListener('click', () => { trackAction('panel', 'close-overlay', sidePanel.dataset.region || 'unknown'); closePanel(); });
 document.addEventListener('keydown', (e) => {
+  trackAction('keyboard', 'keydown', e.key);
   if (e.key === 'Escape' && panelOpen) closePanel();
 });
 
@@ -1299,6 +1325,7 @@ function buildRegionGrid() {
   // Click handlers for grid cards
   regionsGrid.querySelectorAll('.region-card').forEach(card => {
     const handler = () => {
+      trackAction('grid', 'click-card', card.dataset.region);
       const region = REGIONS[card.dataset.region];
       if (region) openPanel(region, null);
       // Scroll back up to brain
@@ -1321,6 +1348,7 @@ const btnAxes   = document.getElementById('btnAxes');
 const btnLabels = document.getElementById('btnLabels');
 
 btnAxes?.addEventListener('click', () => {
+  trackAction('toolbar', 'toggle', axesVisible ? 'axes-off' : 'axes-on');
   axesVisible = !axesVisible;
   btnAxes.classList.toggle('active', axesVisible);
 
@@ -1358,6 +1386,7 @@ function applyLabelMode() {
 }
 
 btnLabels?.addEventListener('click', () => {
+  trackAction('toolbar', 'toggle', `label-mode-${labelMode}`);
   labelMode = (labelMode + 1) % 3;
   applyLabelMode();
 });
@@ -1368,6 +1397,7 @@ btnLabels?.addEventListener('click', () => {
 
 document.getElementById('emailForm')?.addEventListener('submit', async (e) => {
   e.preventDefault();
+  trackAction('form', 'submit', 'email-form');
   const form    = e.target;
   const data    = new FormData(form);
   const success = document.getElementById('formSuccess');
