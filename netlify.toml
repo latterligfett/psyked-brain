@@ -1,8 +1,12 @@
 # Netlify configuration for PSYKED.
 #
-# NOTE: No [build] section on purpose — this is a no-build static site and the
-# publish directory is already configured in the Netlify UI. Adding build
-# settings here could override that, so we only declare headers.
+# This is a no-build static site served straight from the repo root.
+# The [build] block makes the deploy explicit now that the site is linked
+# to GitHub for continuous deployment (push to main → auto-deploy).
+#
+[build]
+  publish = "."
+  command = ""
 #
 # We also intentionally do NOT add a catch-all "/* -> /index.html" rewrite:
 # this is a multi-page static site (index.html, ebook.html, quiz.html,
