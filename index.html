@@ -9,6 +9,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
+
+  <!-- Kick off the brain-model fetch in parallel with app.js parsing.
+       GLTFLoader's later fetch will reuse this in-flight request. -->
+  <link rel="preload" href="public/brain_complete.glb" as="fetch" type="model/gltf-binary" crossorigin="anonymous" />
 </head>
 <body>
 
@@ -168,7 +172,7 @@
   }
   </script>
 
-  <script type="module" src="app.js?v=14"></script>
+  <script type="module" src="app.js?v=15"></script>
 
   <!-- Click Logger (vanilla JS — no module deps) -->
   <script>

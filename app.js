@@ -430,12 +430,36 @@ function getMeshRegion(name) {
       (n.endsWith('008') || n.endsWith('.008')))
     return REGIONS.occipital;
 
+  // ── Lateral Parietal Cortex (left & right) ────────────────
+  // Confirmed visually: the unnumbered "segment of cerebral hemisphere" and
+  // its .001 pair sit on the upper-middle lateral surface — above the
+  // temporal lobe, behind the frontal lobe, forward of the occipital pole.
+  // Routed to the ACC/Parietal bucket to match the rest of the parietal
+  // cortex handling below.
+  if (n === 'segment of cerebral hemisphere' ||
+      (n.includes('segment of cerebral hemisphere') &&
+       (n.endsWith('001') || n.endsWith('.001'))))
+    return REGIONS.acc;
+
+  // ── Insula / Operculum (left & right) ─────────────────────
+  // segments 002/003 (deep, near-midline) + 004/005 (lateral, overlying)
+  // confirmed by GLB centroid geometry + screenshot to form the concentric
+  // insular/opercular shells at mid-height, mid-depth where the frontal,
+  // temporal and parietal lobes converge. The insula belongs to the same
+  // salience-network/ACC bucket already used for `n.includes('insula')`.
+  if (n.includes('segment of cerebral hemisphere') &&
+      (n.endsWith('002') || n.endsWith('.002') ||
+       n.endsWith('003') || n.endsWith('.003') ||
+       n.endsWith('004') || n.endsWith('.004') ||
+       n.endsWith('005') || n.endsWith('.005')))
+    return REGIONS.acc;
+
   // ── Anterior Cingulate Cortex (ACC) / Parietal ────────────
   // cingulate gyrus, corpus callosum, parietal cortices,
   // postcentral gyrus, supramarginal, angular, insula
-  // (Note: segment-of-cerebral-hemisphere NNN meshes that don't match
-  // fusiform (006/007) or occipital (008) are intentionally handled by
-  // specific rules above — no catch-all here to avoid priority conflicts)
+  // (Note: every segment-of-cerebral-hemisphere NNN mesh is now mapped by a
+  // specific rule above — fusiform (006/007), occipital (008), parietal
+  // (bare/001), insula/operculum (002–005) — so none fall through here)
   if (n.includes('cingulate') || n.includes('corpus callosum') ||
       n.includes('postcentral') || n.includes('parietal') ||
       n.includes('supramarginal') || n.includes('angular gyrus') ||
@@ -956,9 +980,17 @@ gltfLoader.load(
   },
 
   (xhr) => {
-    const pct = Math.round((xhr.loaded / xhr.total) * 100);
     const txt = document.querySelector('.loader-text');
-    if (txt) txt.textContent = `Loading brain… ${pct}%`;
+    if (!txt) return;
+    // xhr.total is 0 when the server omits Content-Length (chunked encoding,
+    // some CDN configs). Fall back to a MB readout so we never display NaN%.
+    if (xhr.total > 0) {
+      const pct = Math.round((xhr.loaded / xhr.total) * 100);
+      txt.textContent = `Loading brain… ${pct}%`;
+    } else {
+      const mb = (xhr.loaded / (1024 * 1024)).toFixed(1);
+      txt.textContent = `Loading brain… ${mb} MB`;
+    }
   },
 
   (err) => {
@@ -969,7 +1001,7 @@ gltfLoader.load(
 );
 
 function logMeshNames() {
-  console.group('Brain mesh names (for mapping):');
+  console.groupCollapsed('Brain mesh names (for mapping):');
   brainMeshes.forEach(m => console.log(m.name || '(unnamed)'));
   console.groupEnd();
 }

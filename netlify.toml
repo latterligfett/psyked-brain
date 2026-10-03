@@ -1,0 +1,36 @@
+# Netlify configuration for PSYKED.
+#
+# NOTE: No [build] section on purpose — this is a no-build static site and the
+# publish directory is already configured in the Netlify UI. Adding build
+# settings here could override that, so we only declare headers.
+#
+# We also intentionally do NOT add a catch-all "/* -> /index.html" rewrite:
+# this is a multi-page static site (index.html, ebook.html, quiz.html,
+# regions/*.html). Netlify serves those files directly; a SPA-style rewrite
+# would break every page except the home page.
+
+# ── Long-cache the heavy, immutable binary assets ─────────────────────────
+# Everything under /public/ is content-addressed-by-filename (the brain GLBs
+# and per-region PNGs never change in place). Cache them hard so repeat
+# visits are instant.
+#
+# IMPORTANT: because these are served "immutable", a browser will not
+# re-fetch them for a year. When we ship the compressed model later, give it
+# a NEW filename (e.g. brain_complete.draco.glb) rather than overwriting the
+# existing one, or returning visitors will keep the stale cached copy.
+[[headers]]
+  for = "/public/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Belt-and-braces: also match these asset types if any are ever served from
+# outside /public/.
+[[headers]]
+  for = "/*.glb"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.hdr"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
