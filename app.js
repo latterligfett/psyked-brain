@@ -1088,8 +1088,8 @@ canvas.addEventListener('click', (e) => {
   const hit = hitTest();
 
   // 🔍 DEBUG: log every click
-  trackAction('brain', 'click', hit.name);
   if (hit) {
+    trackAction('brain', 'click', hit.name);
     const region = getMeshRegion(hit.name);
     console.log(`[CLICK] mesh="${hit.name}" → region="${region ? region.id : 'NULL (→ Brain Overview)'}"`)
   } else {
