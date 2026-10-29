@@ -889,7 +889,7 @@ const gltfLoader = new GLTFLoader();
 gltfLoader.setDRACOLoader(dracoLoader);
 
 gltfLoader.load(
-  'public/brain_complete.glb',
+  'public/brain_complete.draco.glb',
 
   (gltf) => {
     const model = gltf.scene;

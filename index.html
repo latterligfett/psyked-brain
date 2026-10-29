@@ -5,6 +5,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>PSYKED — Know your brain. Own your performance.</title>
   <meta name="description" content="Interactive 3D brain model. Click a region. Get practical protocols to optimize your mental and physical performance." />
+
+  <!-- ═══ SEO / CANONICAL ═══ -->
+  <link rel="canonical" href="https://psyked.netlify.app/" />
+  <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#04070F" />
+  <meta name="author" content="Psyked" />
+
+  <!-- ═══ OPEN GRAPH (Facebook / LinkedIn / etc.) ═══ -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Psyked" />
+  <meta property="og:url" content="https://psyked.netlify.app/" />
+  <meta property="og:title" content="PSYKED — Know your brain. Own your performance." />
+  <meta property="og:description" content="Interactive 3D brain model. Click a region. Get practical, science-backed protocols to optimize your mental and physical performance." />
+  <meta property="og:image" content="https://psyked.netlify.app/public/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Psyked — interactive 3D brain performance explorer" />
+
+  <!-- ═══ TWITTER CARD ═══ -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="PSYKED — Know your brain. Own your performance." />
+  <meta name="twitter:description" content="Interactive 3D brain model. Click a region. Get practical, science-backed protocols to optimize your mental and physical performance." />
+  <meta name="twitter:image" content="https://psyked.netlify.app/public/og-image.png" />
+
+  <!-- ═══ FAVICON ═══ -->
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="favicon.svg" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -12,7 +40,7 @@
 
   <!-- Kick off the brain-model fetch in parallel with app.js parsing.
        GLTFLoader's later fetch will reuse this in-flight request. -->
-  <link rel="preload" href="public/brain_complete.glb" as="fetch" type="model/gltf-binary" crossorigin="anonymous" />
+  <link rel="preload" href="public/brain_complete.draco.glb" as="fetch" type="model/gltf-binary" crossorigin="anonymous" />
 </head>
 <body>
 
@@ -172,7 +200,7 @@
   }
   </script>
 
-  <script type="module" src="app.js?v=15"></script>
+  <script type="module" src="app.js?v=16"></script>
 
   <!-- Click Logger (vanilla JS — no module deps) -->
   <script>
