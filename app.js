@@ -372,7 +372,7 @@ const REGIONS = {
       { label: 'Sleep is non-negotiable', detail: '7–9h repairs every region simultaneously' },
       { label: 'Exercise is medicine', detail: 'The single best intervention across all 7 regions' },
       { label: 'Stress is a dial, not a switch', detail: 'Train your stress response — don\'t just manage it' },
-      { label: 'Get the full protocol guide', detail: '35 protocols, one per brain region, delivered to your inbox' },
+      { label: 'Get the full protocol guide', detail: '60 protocols across 12 brain regions, delivered to your inbox' },
     ],
   },
 };
