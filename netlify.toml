@@ -7,6 +7,14 @@
 [build]
   publish = "."
   command = ""
+
+# ── Serverless functions ──────────────────────────────────────────────────
+# /.netlify/functions/subscribe handles email signups: it adds the subscriber
+# to MailerLite (with their quiz results as custom fields) and lets a
+# MailerLite automation deliver the personalized plan email.
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
 #
 # We also intentionally do NOT add a catch-all "/* -> /index.html" rewrite:
 # this is a multi-page static site (index.html, ebook.html, quiz.html,

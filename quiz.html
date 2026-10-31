@@ -665,6 +665,19 @@ document.getElementById('email-form').addEventListener('submit', async (e) => {
   e.preventDefault();
   const form = e.target;
   const data = new FormData(form);
+  // Primary: MailerLite via Netlify Function (sends the personalized plan email)
+  try {
+    await fetch('/.netlify/functions/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: data.get('email'),
+        results: data.get('results'),
+        source: 'quiz',
+      }),
+    });
+  } catch(_) {}
+  // Backup: Netlify Forms capture (so no lead is ever lost)
   try {
     await fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(data).toString() });
   } catch(_) {}

@@ -1470,19 +1470,26 @@ document.getElementById('emailForm')?.addEventListener('submit', async (e) => {
   const data    = new FormData(form);
   const success = document.getElementById('formSuccess');
 
+  // Primary: MailerLite via Netlify Function (sends the guide email)
+  try {
+    await fetch('/.netlify/functions/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: data.get('email'), source: 'newsletter' }),
+    });
+  } catch { /* ignore — backup capture below */ }
+
+  // Backup: Netlify Forms capture (so no lead is ever lost)
   try {
     await fetch('/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams(data).toString(),
     });
-    form.style.display    = 'none';
-    success.style.display = 'flex';
-  } catch {
-    // Fallback: just show success (Netlify Forms handles on deploy)
-    form.style.display    = 'none';
-    success.style.display = 'flex';
-  }
+  } catch { /* already captured by the function, or offline */ }
+
+  form.style.display    = 'none';
+  success.style.display = 'flex';
 });
 
 // ═══════════════════════════════════════════════════════════
