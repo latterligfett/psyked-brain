@@ -637,6 +637,14 @@ a:hover { text-decoration: underline; }
   overflow: hidden;
 }
 
+/* Cards rendered as real links (regions with an SEO deep-dive page) must
+   look identical to the <div> cards — no underline, inherited text color. */
+a.region-card {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
 .region-card::before {
   content: '';
   position: absolute;

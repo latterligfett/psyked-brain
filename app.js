@@ -1347,23 +1347,49 @@ function buildPanelHTML(region) {
 // REGION GRID (below fold)
 // ═══════════════════════════════════════════════════════════
 
+// Region ID → dedicated SEO deep-dive page (only regions that have one).
+// Used to render grid cards as real, crawlable internal links.
+const REGION_PAGES = {
+  prefrontal:   'regions/prefrontal-cortex.html',
+  amygdala:     'regions/amygdala.html',
+  hippocampus:  'regions/hippocampus.html',
+  cerebellum:   'regions/cerebellum.html',
+  acc:          'regions/anterior-cingulate-cortex.html',
+  brainstem:    'regions/brain-stem.html',
+  basalganglia: 'regions/basal-ganglia.html',
+  temporal:     'regions/temporal-lobe.html',
+  thalamus:     'regions/thalamus.html',
+};
+
 function buildRegionGrid() {
   const cards = Object.values(REGIONS)
     .filter(r => r.id !== 'overview' && r.id !== 'ventricles')
-    .map((r, i) => `
-      <div class="region-card" data-region="${r.id}" tabindex="0" role="button" aria-label="Learn about ${r.name}">
-        <div class="card-number">0${i + 1}</div>
+    .map((r, i) => {
+      const num  = String(i + 1).padStart(2, '0');
+      const page = REGION_PAGES[r.id];
+      const inner = `
+        <div class="card-number">${num}</div>
         <div class="card-name">${r.name}</div>
         <div class="card-role">${r.role}</div>
         <div class="card-tag">View protocols</div>
-      </div>
-    `).join('');
+      `;
+      // Regions with a deep-dive page render as a real <a> so search engines
+      // can crawl them and users can middle/ctrl-click to open in a new tab.
+      // A plain left-click is intercepted below to open the in-page panel.
+      return page
+        ? `<a class="region-card" href="${page}" data-region="${r.id}" aria-label="${r.name} — view protocols (or open the full deep-dive)">${inner}</a>`
+        : `<div class="region-card" data-region="${r.id}" tabindex="0" role="button" aria-label="Learn about ${r.name}">${inner}</div>`;
+    }).join('');
 
   regionsGrid.innerHTML = cards;
 
   // Click handlers for grid cards
   regionsGrid.querySelectorAll('.region-card').forEach(card => {
-    const handler = () => {
+    const handler = (e) => {
+      // Let modified clicks (ctrl/cmd/shift/middle) follow the link natively
+      // so "open in new tab" still works on cards that are real links.
+      if (e && (e.ctrlKey || e.metaKey || e.shiftKey || e.button === 1)) return;
+      if (e && e.preventDefault) e.preventDefault();
       trackAction('grid', 'click-card', card.dataset.region);
       const region = REGIONS[card.dataset.region];
       if (region) openPanel(region, null);
@@ -1371,9 +1397,12 @@ function buildRegionGrid() {
       document.getElementById('brain-viewer').scrollIntoView({ behavior: 'smooth' });
     };
     card.addEventListener('click', handler);
-    card.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handler(); }
-    });
+    // Non-link cards need explicit keyboard activation; <a> handles it natively.
+    if (card.tagName !== 'A') {
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handler(); }
+      });
+    }
   });
 }
 
