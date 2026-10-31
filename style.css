@@ -705,6 +705,61 @@ a.region-card {
 }
 
 /* ─── EMAIL SECTION ─────────────────────────────────────── */
+/* ═══ QUIZ CTA ═══ */
+.quiz-cta-section {
+  padding: 40px 0 0;
+  background: var(--bg-base);
+}
+
+.quiz-cta-card {
+  position: relative;
+  max-width: 720px;
+  margin: 0 auto;
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.07), rgba(123, 47, 255, 0.07));
+  border: 1px solid var(--border-hover);
+  border-radius: var(--radius-lg);
+  padding: 44px 40px;
+  text-align: center;
+  overflow: hidden;
+}
+
+.quiz-cta-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: rgba(0, 212, 255, 0.08);
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  padding: 5px 14px;
+  border-radius: 99px;
+  margin-bottom: 20px;
+}
+
+.quiz-cta-title {
+  font-family: var(--font-display);
+  font-size: clamp(22px, 4vw, 34px);
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 14px;
+}
+
+.quiz-cta-sub {
+  font-size: 16px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  max-width: 520px;
+  margin: 0 auto 28px;
+}
+
+.quiz-cta-btn {
+  display: inline-block;
+  text-decoration: none;
+}
+
 .email-section {
   padding: 80px 0;
   background: var(--bg-base);
